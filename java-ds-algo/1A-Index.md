@@ -174,24 +174,6 @@ O(N2) is poor (Bubble sort)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Simple Sorting
 - Sorting is So essential (for example in binary search) there exists a lots of algorithms
     - Bubble Sort
@@ -244,6 +226,9 @@ once done this
     We are swapping -- swap(in, in+1); <-- Hence we must make 1 short so we can do in+1 operation
     We have to Preserve the RightMost(1st)/NextRight(subsequent) elements for each iteration
     Bcz the RightMost(1st)/NextRight(subsequent) are very sorted
+
+    THE KEY POINT IN THIS ALGORITHM IS - swap(in, in+1);
+    /** swapping index & index+1 basedon comparision & Preserving the Right side */
 
 
     `````````````````````````````````````````````
@@ -331,10 +316,19 @@ public static void sort(int[] arr) {
 ```
 
 
-
-
 - Stability
 - A sorting algorithms retain the preveous sorting order are said to be stable.
+
+
+## Stacks & Queues
+- 
+
+
+
+
+
+
+
 
 
 
