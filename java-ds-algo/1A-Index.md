@@ -2,6 +2,7 @@
 
 - What is a data structure ?
     - It's how your data is structured.. It could be structured in a list (List of items) or set (set of records) or map (key -> value)
+    - You can think it as a small inmemory structured database
 
 - What is an Algorithm ?
     - How fast we process the "structured data" !!
@@ -320,12 +321,16 @@ public static void sort(int[] arr) {
 - A sorting algorithms retain the preveous sorting order are said to be stable.
 
 
-## Stacks & Queues
+## Stacks & Queue & Priority Queue
+
+### Stacks
+- Only one item can be read or removed at a given time (unless you cheat)
+- Methods : push() pop() peek() [readonly]
+- The push/pop is efficient = constant O(1) time
+- Using stack wrapper - make certain type of algorithms (LIFO) less error prone
+
+### Queues
 - 
-
-
-
-
 
 
 
@@ -344,3 +349,8 @@ public static void sort(int[] arr) {
 
 ## Perfrmance
 - Too many method call add lil overhead
+- heap - special kind of tree
+- Stack used to help traverse the nodes of a tree - Binary Trees
+- Graphs, we'll apply it to searching the vertices of a graph
+- Theoretically, an ADT stack doesn't become full
+
