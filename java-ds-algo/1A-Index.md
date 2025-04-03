@@ -210,17 +210,55 @@ Keep doing this to push the largest one to extreme right : you made N-1 comparis
 once done this
 
 ```
-    public void bubbleSort() {
-        int out, in;
-        for(out=nElems-1; out>1; out--)   // outer loop (backward)
-            for(in=0; in<out; in++)        // inner loop (forward)
-                if( a[in] > a[in+1] )
-                    swap(in, in+1);          // swap them
-    }
-
     in - index 0
     nElems - no of elements
     out - nElems-1
+
+    -------------------------------------------------------------------
+    BubbleSort.java
+    -------------------------------------------------------------------
+    public class HelloWorld {
+        public static int a[] = {3,4,2,1};
+
+        public static void main(String []args) {
+            bubbleSort();
+            for (int b : a)
+                System.out.println(b);
+        }
+
+        public static void bubbleSort() {
+            for(int lengthAsIdx = a.length - 1; lengthAsIdx > 0;lengthAsIdx--) // 3 2 1
+                for(int in=0; in<lengthAsIdx; in++)  // MAX-2   MIN-1   (lengthAsIdx)
+                    if(a[in] > a[in+1])      // SWAP 2 - 3
+                        swap(in, in+1);
+        }
+
+        private static void swap(int one, int two) {
+            long temp = a[one];
+            a[one] = a[two];
+            a[two] = (int)temp;
+        }
+    }
+
+    THINKING IT REVERSE
+    We are swapping -- swap(in, in+1); <-- Hence we must make 1 short so we can do in+1 operation
+    We have to Preserve the RightMost(1st)/NextRight(subsequent) elements for each iteration
+    Bcz the RightMost(1st)/NextRight(subsequent) are very sorted
+
+
+    `````````````````````````````````````````````
+    `   // @TODO - To report erreta on book     `
+    `````````````````````````````````````````````
+
+
+    -------------------------------------------
+    The bubbleSort() method
+    -------------------------------------------
+    Considering 4 elements
+    For outer Loop out=3
+    The inner Loop in=0->1->2
+    Seeing swap(in, in+1); --> the final
+
 
 ```
 
