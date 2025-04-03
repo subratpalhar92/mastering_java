@@ -330,7 +330,8 @@ public static void sort(int[] arr) {
 - Using stack wrapper - make certain type of algorithms (LIFO) less error prone
 
 ### Queues
-- 
+- Methods: put or add       delete or get       peek
+
 
 
 
