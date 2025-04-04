@@ -330,11 +330,33 @@ public static void sort(int[] arr) {
 - Using stack wrapper - make certain type of algorithms (LIFO) less error prone
 
 ### Queues
-- Methods: put or add       delete or get       peek
+- Methods: put or add       delete or get       peek    remove()
+- Circular Queue - As queue removed from 1st & added from last, there are "spaces around the front"
+    - The Front & Rear arrows wrap around to the beginning of the array
+    - The result is a circular queue (sometimes called a ring buffer)
+    - In a circular Queue for a scinario - the front & rear at the same idx i.e. 0 => empty / full @ same time
+    - This problem can be solved by making the array one cell larger than the maximum number of items that will be placed in it
+    - So even if rear @ 0th idx the front is sm where @ 9th idx
+- The efficiency of Queue is still O(1) time
+
+### Deques
+- Insert items at either end & delete them from either end
+- insertLeft()/insertRight() & removeLeft()/removeRight()
+- THis is a more versatile data structure than either a stack or a queue and is sometimes used in container class libraries to serve both purposes.
+- However, it's not used as often as stacks and queues
 
 
-
-
+### Priority Queues
+- items are ordered by key value so that the item with the lowest key (or in some implementations the highest key) is always at the front
+- ues case: preemptive multitasking operating system
+- priority queues are, as we noted earlier, often implemented with a data structure called a heap
+- In an underlying array implement,
+    - The [minimum] value is always at [front] & [largest] item is always at reaer [index-0]
+    - When you put a value in between the item will be shifted to make room for the current value
+    - The rear arrow always at 0 idx,, items at front are removed only
+    - Here insertion is costly but the deletion is not (deletion reqd search & then fill the empty space)
+- For larger numbers of items, or when speed is critical, the heap is a better choice, then array
+- insertion runs in O(N) (devided by 2!!) time, while deletion takes O(1) time
 
 
 
