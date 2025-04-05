@@ -52,7 +52,6 @@ Map provides - HashTable: just synchronized version
 - A DS can be sorted - i.e. their insertion order doesn't mater - their sorting order does
 
 
-- Abstract Data Types (ADTs)
 - Array : Insertion fast, Access(unless idx known) : But deletion is complex
 - Stack & Queue : Slow access to other items
 - LinkedList: Fast insertion & deletion : But slow search
@@ -357,6 +356,89 @@ public static void sort(int[] arr) {
     - Here insertion is costly but the deletion is not (deletion reqd search & then fill the empty space)
 - For larger numbers of items, or when speed is critical, the heap is a better choice, then array
 - insertion runs in O(N) (devided by 2!!) time, while deletion takes O(1) time
+
+
+
+## Linked Lists
+- LinkedList most commonly used after array
+- LL is more preferred over an array unless you need frequent random access to individual items using an index
+- [Philosophy]
+    - When you do an implementation with help of array, its quite fantastic
+    - But, when you arrange items without an array
+    - The best approach would be to have one object holds address of another !
+    - Unlike array you can't directly go to 6th or 7th index, rather you would start from 1st element
+    - & from there you will make progress till 6th or 7th
+
+### [Approach-1] (You can insert links anywhere in the list)
+- A Link object contains a reference to the next link in the list
+    ```
+        class Link {
+            public int iData;
+            public double dData;
+            public Link next;
+        }
+    ```
+    - When you search it looks for the "LINK" scanning one by one
+    - When you try to Delete, It tries to find the LINK, once link found it deletes that link
+    - & connects the arrow from the previous link straight across to the following link
+
+
+### A Simple Linked List
+    - insertFirst()     deleteFirst()   displayList()
+    - find() : checks in every item starting from the first
+    - delete() : is similar to find() in the way it searches for the link to be deleted
+    - insertAfter() : finds a link with a specified key value & insert a new link following it
+
+### Double-Ended Lists (FirstLastList)
+- The 1st element has link to 2nd & the last element
+- With having reference to the last link
+- You can insert a new link directly at the end of the list as well as at the beginning of the list
+- Repeated insertions at the front of the list reverse the order of the items, while repeated insertions at the end preserve the order
+- This have a new method : insertLast()
+
+```
+
+    class FirstLastList {
+        private Link first;
+        private Link last;
+    }
+
+    new FirstLastList().insertFirst()
+    Or
+    new FirstLastList().insertLast()
+
+```
+
+- The insertion & deletion routines are similar to those in a single-ended list
+- However, both insertion routines must watch out for the special case
+- When the list is empty prior to the insertion - If isEmpty() is true
+    - Then insertFirst() must set [last] to the new link
+    - The insertLast() must set [first] to the new link
+    - Deleting from the start of the list is also a special case if it's the last item on the list: last must be set to point to null in this case
+- Insertion and deletion at the beginning of a linked list are very fast O(1)
+- Finding, deleting, or inserting next to a specific item requires searching through, on the average, half the items in the list. This requires O(N)
+- One advantages over array is that, There is [NO SIZE LIMITATION]
+
+```
+!!!
+- Unfortunately, making a list double-ended doesn't help you to delete the last link because there is still no reference to the next-to-last link, whose next field would need to be changed to null if the last link were deleted. To conveniently delete the last link, you would need a doubly linked list
+```
+
+#### Abstract Data Types (ADTs)
+- You can implement a STACK / QUEUE with linkedlist (instead of an array)
+- ADT are data types - that hides actual implementation from user of it & only exposes the API
+
+- By decoupling the specification of the ADT from the implementation details, you can simplify the design process
+- once the ADT has been designed, the underlying data structure must be carefully chosen to make the specified operations as efficient as possible. If you need random access to element N, for example, the linked-list representation isn't so good because random access isn't an efficient operation for a linked list. You'd be better off with an array
+- If u r designing an ADT u should be clear what should be a basic data structure or which would be an ADT
+
+
+### Sorted Lists
+- 
+
+
+
+
 
 
 
