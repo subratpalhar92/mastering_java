@@ -369,7 +369,7 @@ public static void sort(int[] arr) {
     - Unlike array you can't directly go to 6th or 7th index, rather you would start from 1st element
     - & from there you will make progress till 6th or 7th
 
-### [Approach-1] (You can insert links anywhere in the list)
+### [Approach-1-Unsorted] (You can insert links anywhere in the list)
 - A Link object contains a reference to the next link in the list
     ```
         class Link {
@@ -383,13 +383,13 @@ public static void sort(int[] arr) {
     - & connects the arrow from the previous link straight across to the following link
 
 
-### A Simple Linked List
+#### A Simple Linked List
     - insertFirst()     deleteFirst()   displayList()
     - find() : checks in every item starting from the first
     - delete() : is similar to find() in the way it searches for the link to be deleted
     - insertAfter() : finds a link with a specified key value & insert a new link following it
 
-### Double-Ended Lists (FirstLastList)
+#### Double-Ended Lists (FirstLastList)
 - The 1st element has link to 2nd & the last element
 - With having reference to the last link
 - You can insert a new link directly at the end of the list as well as at the beginning of the list
@@ -433,11 +433,77 @@ public static void sort(int[] arr) {
 - If u r designing an ADT u should be clear what should be a basic data structure or which would be an ADT
 
 
-### Sorted Lists
-- 
+### [Approach-2-Sorted-Lists]
+- In a sorted list, the items are arranged in sorted order by key value
+- Deletion is often limited to the smallest (or the largest) item in the list, which is at the start of the list
+- although sometimes find() & delete() methods, which search through the list for specified links, are used as well
+- The advantages of a sorted list over a sorted array are speed of insertion (because elements don't need to be moved)
+- A sorted list can also be used to implement a priority queue, although a heap
+- Insertion
+    - Keep checking with while loop
+    - Till the link currently being examined (current.dData) is no longer smaller than the key of the link being inserted (key)
+    - while loop also terminates if current is null
+    - or the list may be empty;  previous will be null; so we set first to the new link
+- Delete
+    - Removal always from the front (The lowest one)
+
+- Efficiency
+    - Insertion and deletion of arbitrary items in the sorted linked list require O(N) comparisons (N/2 on the average)
+    - The minimum value can be found, or deleted, in O(1) time
+
+- If an application frequently accesses the "minimum item" & fast insertion isn't critical, then a sorted linked list is an effective choice
+- A priority queue might be implemented by a sorted linked list, for example
+
+
+- List Insertion Sort
+    - To sort an array of unsorted data items you can use Sorted list - first addd to sorted list & then remove from it
+    - This type of sort turns out to be substantially more efficient than the more usual insertion sort within an array, described in Chapter 3, "Simple Sorting," because fewer copies are necessary. It's still an O(N2) process because inserting each item into the sorted list involves comparing a new item with an average of half the items already in the list, and there are N items to insert, resulting in about N2/4 comparisons. However, each item is copied only twice: once from the array to the list and once from the list to the array. N*2 copies compares favorably with the insertion sort within an array, where there are about N2 copies
+    - The downside of the list insertion sort, compared with an array-based insertion sort, is that it takes somewhat more than twice as much memory: The array and linked list must be in memory at the same time
+
+### Doubly Linked Lists
+- NOT TO BE CONFUSED WITH,  double-ended list
+- A potential problem with ordinary linked lists is that it's difficult to traverse backward along the list (Always NEXT)
+
+ - Doubly Linked List as Basis for Deques :: In a deque you can insert/delete at either end, & the doubly linked list provides this capability
+
+
+## Iterators
+- ommonly called iterators or sometimes, as in certain Java classes, enumerators
+- Its a separate object , than Link
+- It points to Link
+- There can be multiple iterator on same List
+```
+class ListIterator() {
+   private LinkList ourList;   // reference to "parent" list
+
+   private Link current;
+   private Link previous;
+
+   public void nextLink() {
+    previous = current;
+    current = current.next;
+   }
+}
+
+LinkList theList = new LinkList();
+ListIterator iter1 = theList.getIterator();
+```
+
+- reset() - Sets the iterator to the start of the list
+- nextLink() - Moves the iterator to the next link
+- getCurrent() - Returns the link at the iterator
+- atEnd() - Returns true if the iterator is at the end of the list
+- insertAfter() - Inserts a new link after the iterator
+- insertBefore() - Inserts a new link before the iterator
+- deleteCurrent() - Deletes the link at the iterator
+
+- Deciding which tasks should be carried out by an iterator and which by the list itself is not always easy
+- An insertBefore() method works best in the iterator, but an insertFirst() routine that always inserts at the beginning of the list might be more appropriate in the list class
 
 
 
+## Recursion
+### Triangular Numbers
 
 
 
