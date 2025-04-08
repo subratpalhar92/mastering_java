@@ -504,6 +504,206 @@ ListIterator iter1 = theList.getIterator();
 
 ## Recursion
 ### Triangular Numbers
+- 1, 3, 6, 10, 15, 21...... i.e. (+1, +2, +3, +4, +5 ......)
+- @3rd Position => 3 + 2 + 1
+- @5th Position => 5 + 4 + 3 + 2 + 1
+- @nth Position => n + n-1 + ...
+
+- total += n;   n--;
+- Or you can apply recursion
+- Or nth triangular number = (n^2+n)/2
+
+- Calling a method involves certain overhead. Control must be transferred from the location of the call to the beginning of the method
+- In addition, the arguments to the method and the address to which the method should return must be pushed onto an internal stack so that the method can access the argument values and know where to return
+
+- Another inefficiency is that memory is used to store all the intermediate arguments and return values on the system's internal stack. This may cause problems if there is a large amount of data, leading to stack overflow.
+- Recursion is usually used because it simplifies a problem conceptually, not because it’s inherently more efficient.
+- mathematical induction
+```
+tri(n) = 1                 if n = 1
+tri(n) = n + tri(n-1)      if n > 1
+```
+### Factorials
+- Factorials are similar in concept to triangular numbers, except that multiplication is used instead of addition
+- 5*4*3*2*1
+- The factorial of 0 is defined to be 1.
+- if(n==0) return 1;
+- arious other numerological entities lend themselves to calculation using recursion in a similar way, such as finding the greatest common denominator of two numbers (which is used to reduce a fraction to lowest terms), raising a number to a power, and so on.
+- Again, while these calculations are interesting for demonstrating recursion, they probably wouldn't be used in practice because a loop-based approach is more efficient.
+### Anagrams
+- A permutation is an arrangement of things in a definite order
+- cat => cat cta atc act tca tac
+- For 3 letters there are 6 possible words;
+- for 4 letters there are 24 words;
+- for 5 letters, 120; and so on
+- One way of thinking : keep the first letter & rotate next 2
+- For more than 3 lettter ? doing a horizeontal recurssion helps !!
+
+```
+
+@TODO
+
+```
+
+### A Recursive Binary Search
+-
+
+```
+public int find(long searchKey)
+   {
+   int lowerBound = 0;
+   int upperBound = nElems-1;
+   int curIn;
+
+   while(true)
+      {
+      curIn = (lowerBound + upperBound ) / 2;
+      if(a[curIn]==searchKey)
+         return curIn;              // found it
+      else if(lowerBound > upperBound)
+         return nElems;             // can't find it
+      else                          // divide range
+         {
+         if(a[curIn] < searchKey)
+            lowerBound = curIn + 1; // it's in upper half
+         else
+            upperBound = curIn - 1; // it's in lower half
+         }  // end else divide range
+      }  // end while
+   }  // end find()
+```
+
+- Recursive approach
+```
+  private int recFind(long searchKey, int lowerBound, int upperBound) {
+   int curIn;
+
+   curIn = (lowerBound + upperBound ) / 2;
+   if(a[curIn]==searchKey)
+      return curIn;              // found it
+   else if(lowerBound > upperBound)
+      return nElems;             // can't find it
+   else                          // divide range
+      {
+      if(a[curIn] < searchKey)   // it's in upper half
+         return recFind(searchKey, curIn+1, upperBound);
+      else                       // it's in lower half
+         return recFind(searchKey, lowerBound, curIn-1);
+      }  // end else divide range
+   }
+```
+
+### Divide-and-Conquer Algorithms
+- binary search is an example of the divide-and-conquer approach
+- Just that its not solved with concurrent approach
+
+
+### The Towers of Hanoi
+- All the disks start out on column A. The object of the puzzle is to transfer all the disks from column A to column C. Only one disk can be moved at a time, and no disk can be placed on a disk that’s smaller than itself.
+- Thinking from the opposite/i.e. from reverse
+- Imagine you have only one largest disk at Source tree & all other are in Intermediate tree
+- So now you can move from Source to destination & then folowed by all the subsequent disks
+```
+public static void main(String[] args) {
+    doTowers(nDisks, 'A', 'B', 'C');
+}
+
+public static void doTowers(int topN, char from, char inter, char to) {
+    if(topN==1)
+        System.out.println("Disk 1 from " + from + " to "+ to);
+    else {
+        doTowers(topN-1, from, to, inter);  // from-->inter
+        System.out.println("Disk " + topN + " from " + from + " to "+ to);
+        doTowers(topN-1, inter, from, to);  // inter-->to
+    }
+}
+
+S - Source (A)
+I - Intermediate (B)
+D - Destination (C)
+
+Enter (3 disks): s=A, i=B, d=C
+   Enter (2 disks): s=A, i=C, d=B
+      Enter (1 disk): s=A, i=B, d=C
+         Base case: move disk 1 from A to C
+      Return (1 disk)
+      Move bottom disk 2 from A to B
+      Enter (1 disk): s=C, i=A, d=B
+         Base case: move disk 1 from C to B
+      Return (1 disk)
+   Return (2 disks)
+   Move bottom disk 3 from A to C
+   Enter (2 disks): s=B, i=A, d=C
+      Enter (1 disk): s=B, i=C, d=A
+         Base case: move disk 1 from B to A
+      Return (1 disk)
+      Move bottom disk 2 from B to C
+      Enter (1 disk): s=A, i=B, d=C
+         Base case: move disk 1 from A to C
+      Return (1 disk)
+   Return (2 disks)
+Return (3 disks)
+
+```
+
+### mergesort
+- The heart of the mergesort algorithm is the merging of two already-sorted arrays
+- It requires an additional array in memory (Downside)
+- However, if you have enough space, it's a good choice
+- If you have a array of size 8 devide it 4A - 4B
+    - For 4A devide it to 2AA & 2AA & while devide insrt it in order    => 4AA
+    - Do the same Process for 4B - 2BB & 2BB                            => 4BB
+    - Then comapre the 0th idx from 4AA & oth idx from 4BB & merge them into a destination arrray 4DD
+- Speed/Time mergesort is O(N*logN)
+
+- There are 24 copies necessary to sort 8 items [2+2+4] & [2+2+4] & merging them => + 8 = 24
+- The log-base(2)of(8) = 3
+- So 8*log-base(2)-of-8 = 24
+- 
+- & multiplying *2 bcz they are also getting copied back to origional array
+- 
+- 
+- 
+- As we break the array into subarray of 2 it becomes the function of 2 (i.e *2 => ^2)
+- I.e. For 2 items 4 (2^2) copies reqd
+- For 4 items 8 (2^3) copies reqd
+- For 8 items 24 (2^4) copies reqd
+
+- It's conceptually easier than quicksort and the Shell short
+
+
+### Eliminating Recursion
+- Sometimes recursive triangle() & factorial() methods can be implemented more efficiently using a simple loop
+- However, various divide-and-conquer algorithms, such as mergesort, work very well as recursive routines
+
+```
+
+## @TODO - Eliminating Recursion
+
+```
+
+### The Knapsack Problem
+- For example, suppose you want your knapsack to weigh exactly 20 pounds
+- And you have five items, with weights of 11, 8, 7, 6, and 5 pounds
+- A solution can be 8+7+5
+
+    - Start by selecting the first item
+    - Try, one by one, each of the possible combinations of the remaining items.
+    - If none of the combinations work, discard the first item, and start the whole process again with the second item.
+
+### Combinations: Picking a Team
+- combination is a selection of things in which their order doesn't matter
+- A, B, C, D, E
+
+
+
+
+
+
+
+
+
+
 
 
 
