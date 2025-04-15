@@ -1004,7 +1004,71 @@ public void recQuickSort(int left, int right) {
 
 
 ### Radix Sort
+- Ten 10 is the radix of the decimal system
+- Two 2 is the radix of the binary system
+- Radix Sort is a non-comparative integer sorting algorithm
+- It works by processing digits of each number from least significant to most significant.
+
+
+
+- The sort involves examining each digit of the key separately, starting with the 1s (least significant) digit
+    - All the data items are divided into 10 groups, according to the value of their 1s digit.
+    - These 10 groups are then reassembled: All the keys ending with 0 go first, followed by all the keys ending in 1, and so on up to 9. We'll call these steps a sub-sort.
+    - In the second sub-sort, all data is divided into 10 groups again, but this time according to the value of their 10s digit. This must be done without changing the order of the previous sort. That is, within each of the 10 groups, the ordering of the items remains the same as it was after step 2; the sub-sorts must be stable.
+    - Again the 10 groups are recombined, those with a 10s digit of 0 first, then those with a 10s digit of 1, and so on up to 9
+    - This process is repeated for the remaining digits. If some keys have fewer digits than others, their higher-order digits are considered to be 0.
+
+
+
+```
+It have 10 buckets
+For every pass - it arranges unit digit, ten digit, 100th digit & so on...
+0th bucket-
+1 bucket-
+2 bucket-
+3 bucket-
+.
+.
+.
+8th bucket-
+9th bucket-
+
+```
+
+- Efficiency of the Radix Sort
+    - In Radix sort, All you do is copy the original data from the array to the lists & back again
+    - If there are 10 data items, this is 20 copies
+    - You repeat this procedure once for each digit
+    - If you assume, say, """""5-digit""""" numbers, then you'll have 20*5 equals 100 copies
+    - If you have 100 data items, there are 200*5 equals 1,000 copies
+    - The number of copies is proportional to the number of data items, which is O(N) [most efficient]
+    - 
+    - 
+    - Unfortunately, it's generally true that if you have more data items, you'll need longer keys.
+    - If you have 10 times as much data, you may need to add another digit to the key
+    - The number of copies is proportional to the number of data items **tim*es** the number of """"digits"""" in the key
+    - The number of digits is the log of the key values, so in most situations we’re back to O(N*logN) efficiency, the same as quicksort
+
+    - 
+    - 
+    - 
+    - There are no comparisons, although it takes time to extract each digit from the number
+    - It may be, however, that a given computer can do the digit-extraction in binary more quickly than it can do a comparison
+    - like mergesort, the radix sort uses about twice as much memory as quicksort
+
+
+
+
+
+
+## Binary Trees
 - 
+
+
+
+
+
+
 
 
 
