@@ -10,7 +10,7 @@
 <h1 id="DATASTRUCTURE(DS)&Algorithm(Algo)"> DATA STRUCTURE (DS) & Algorithm (Algo) </h1>
 
 - What is a data structure ?
-    - It's how your data is structured.. It could be structured in a list (List of items) or set (set of records) or map (key -> value)
+    - It's how your data is structured. It could be structured in a list (List of items) or set (set of records) or map (key -> value)
     - You can think it as a small inmemory structured database
 
 - What is an Algorithm ?
@@ -873,24 +873,138 @@ N*logN          Quicksort, etc.     10              200             3,000       
 - For most data, the higher estimates, such as N3/2, are probably more realistic.
 
 ```
-
-- TO KNOW MORE REFER BOOK
+-  ...........................
+- | TO KNOW MORE REFER BOOK   |
+-  ...........................
 
 ### Partitioning
+- Partitioning is the underlying mechanism of quicksort
+- It takes an approximate/average/pivot point & number that are <= fall in Left & > fall in Right
+- You can wisely choose any value you want for the pivot value
+
+- The two pointers start at opposite ends of the array and move toward each other at a more or less constant rate, stopping and swapping as they go. When they meet, the partition is complete.
+
+    - When leftPtr encounters a data item smaller than the pivot value, it keeps going because that item is already on the correct side of the array. However, when it encounters an item larger than the pivot value, it stops.
+
+    - Similarly, when rightPtr encounters an item larger than the pivot, it keeps going, but when it finds a smaller item, it also stops.
+```
+public int partitionIt(int left, int right, long pivot) {
+    int leftPtr = left - 1;           // right of first elem
+    int rightPtr = right + 1;         // left of pivot
+    
+    while(true) {
+        while(leftPtr < right && [[[[theArray[++leftPtr] < pivot]]]] )
+                ;  // find bigger item (nop - no operation)
+        while(rightPtr > left && [[[[theArray[--rightPtr] > pivot]]]] )
+                ; // find smaller item (nop)
+
+
+        if(leftPtr >= rightPtr)        // if pointers cross,
+            break;                      //    partition done        - Break INFINITY
+        else                           // not crossed, so
+            swap(leftPtr, rightPtr);    //    swap elements
+    }  // end while(true)
+
+    return leftPtr;                   // return partition
+}
+
+---
+
+main() {
+    long pivot = 99;              // pivot value - choose wisely !!
+    System.out.print("Pivot is " + pivot);
+    int size = arr.size();      // partition array
+    int partDex = arr.partitionIt(0, size-1, pivot);
+}
+
+```
+- EDGE CASES
+    - 
+
+- Efficiency of the Partition Algorithm
+    - Running time is proportional to N     ->      O(N) time
+    - More specifically, for each partition there will be N+1 or N+2 comparisons
+    - the pointers overshoot each other before they find out they've "crossed" or gone beyond each other, so there are one or two extra comparisons before the partition is complete.
+    - The number of swaps, however, does depend on how the data is arranged. (MAX ~ N/2 swaps)
+
+
+- Lomuto Partition Scheme
+    - This scheme maintains an index i that points to the end of the "less than pivot" section. It iterates through the subarray, and whenever it encounters an element less than or equal to the pivot, it swaps that element with the element at index i and increments i. Finally, it swaps the pivot with the element at index i.
+- Hoare Partition Scheme
+    - This scheme uses two pointers, one starting from the left and one from the right of the subarray. The left pointer moves right until it finds an element greater than or equal to the pivot, and the right pointer moves left until it finds an element less than or equal to the pivot. These two elements are then swapped. The process continues until the pointers cross.
 
 
 
 
 
+- Also see, Partitioning in Data Mining & Machine Learning 
+    - Clustering Algorithms (K-Means)
+    - Data Preprocessing
 
 
 
 
-## Advanced Sorting
-- Advanced Sorting includes
-    - Shellsort
-    - quicksort
 
+### quicksort
+- A simple steps
+```
+public void recQuickSort(int left, int right) {
+   if(right-left <= 0)        // if size is 1,
+       return;                //    it's already sorted
+   else {                       // size is 2 or larger partition range
+      int partition = partitionIt(left, right);
+      recQuickSort(left, partition-1);   // sort left side
+      recQuickSort(partition+1, right);  // sort right side
+    }
+}
+```
+- A pivot value partition the array into 2 sub-array
+- Which results     [subarray-1    --  The pivot value     -- subarray-2]
+    - subarray-1: 0 to partition-1
+    - subarray-2: partition+1 to right
+- the pivot value is allready sorted
+- The other 2 subarray calls themselves reccursively to sort
+- It often choose from the rightmost element & try to fit starting from left
+(Provided no smaller element not onto the right)
+
+- to sort 100 inversely sorted bars, you'll see that the algorithm runs much more slowly
+- problem is in the selection of the pivot. Ideally, the pivot should be the median of the items being sorted. That is, half the items should be larger than the pivot, and half smaller
+- The worst situation results when a subarray with N elements is divided into one subarray with 1 element and the other with N-1 elements.
+- If this 1 and N-1 division happens with every partition, then every element requires a separate partition step. This is in fact what takes place with inversely sorted data: In all the subarrays, the pivot is the smallest item, so every partition results in N-1 elements in one subarray and only the pivot in the other.
+- performance of the algorithm degenerates to O(N^2)
+- 
+- Median-of-Three Partitioning
+    - To find a good pivot, we used to find the median of the first, last, and middle elements of the array, and use this for the pivot. Picking the median of the first, last, and middle elements is called the median-of-three approach
+    - The number 3 in this case is called a cutoff point
+- Another option for dealing with small partitions is to use the "insertion sort"
+    - When you do this, you aren't restricted to a cutoff of 3. You can set the cutoff to 10, 20, or any other number
+    - Knuth recommends a cutoff of 9
+    - However, the optimum number depends on your computer, operating system, compiler (or interpreter), and so on.
+
+
+- Insertion Sort Following Quicksort
+    - When quicksort is finished, the array will be almost sorted.
+    - You then apply the insertion sort to the entire array.
+    - The insertion sort is supposed to operate efficiently on almost-sorted arrays,
+    - Also note, The insertion sort appears to be happier doing a lot of small sorts than one big one
+
+- Removing Recursion
+    - Another embellishment recommended by many writers is removing recursion from the quicksort algorithm.
+    - This involves rewriting the algorithm to store deferred subarray bounds (left and right) on a stack, and using a loop instead
+    - The idea in doing this is to speed up the program by removing method calls.
+    - However, this idea arose with older compilers and computer architectures, which imposed a large time penalty for each method call.
+    - It's not clear that removing recursion is much of an improvement for modern systems, which handle method calls more efficiently.
+
+
+- Efficiency of Quicksort
+    - quicksort operates in the divide-and-conquer algorithms, in which a recursive method divides a range of items into two groups and then calls itself to handle each group
+    - n this situation the logarithm actually has a base of 2: The running time is proportional to N*log(2)N
+    - Swaps fewer than N/2*log(2)N
+
+
+
+### Radix Sort
+- 
 
 
 
