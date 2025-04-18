@@ -1033,6 +1033,12 @@ For every pass - it arranges unit digit, ten digit, 100th digit & so on...
 8th bucket-
 9th bucket-
 
+In first pass it only consider the unit digit
+Preserve the order
+In Second pass it only consider the 10th digit
+preserve the order
+& so on..
+
 ```
 
 - Efficiency of the Radix Sort
@@ -1062,15 +1068,374 @@ For every pass - it arranges unit digit, ten digit, 100th digit & so on...
 
 
 ## Binary Trees
+- Combines advantages of 2 other structures: (i) An ordered array (ii) A linked list
+    - You can search a tree quickly, as you can an "ordered array"
+        - An ordered array is a good choice for search, bcz elements are ordered,
+        It does search for the half if not found, it search for 2nd half & so on O(logN)
+        - Insertion is bad, bcz if you have to insert an item smome where, You need to move rest of the element towards Right
+    - you can also insert & delete items quickly, as you can with a "linked list"
+        - insert & delete is just mater of O(1) time, just have to cahnge link
+        - But search is average of N/2 item which is slow - requireing O(N) time
+        - There's no way to access a given element without following the chain
+
+- A "Tree" consists of "NODES" (Entity, Object, Student, Employee, Car) connected by "EDGES" (lines) (link or reference or Has-A)
+- Trees have been studied extensively as abstract mathematical entities
+- A tree is actually an instance of a more general category called a graph
+- The only way to get from node to node is to follow a path along the lines.
+- Generally, you are restricted to going in "one direction" along edges: from the root downward.
 - 
+- A tree can have more than 2 child is reffered as 'multiway trees'
+- A binary tree have 2 child & a node have 1 immidiate parent
+- A node that has no children is called a leaf node or simply a leaf
+- A node is visited when program control arrives at the node
+- Merely passing over a node on the path from one node to another is not considered to be visiting the node.
+- But carrying out some operation on the node, such as checking the value of one of its data fields or displaying it is considered
+- Traversing means to visit all the nodes in some specified order.
+- The Lavel starts at 0 zero (From ROOT node)
+- Key value is used to search for the item or perform other operations on it
+- Two children of each node in a binary tree are called: left child & right child
+
+### binary search tree
+- A node's left child must have a key less than its parent, and a node's right child must have a key greater than or equal to its parent
+- Example: hierarchical file structure in a computer system (Not Exactly Similiar)
+- It diifers In a way, That the file structure, subdirectories contain no data; they contain only references to other subdirectories or to files. Only files contain data. In a tree, every node contains data
+
+```
+Folder
+/   \
+    Folder & Files
+        |
+    Folder & Files
+```
+
+- subtrees may also be unbalanced, they have most of their nodes on one side of the root or the other
+- Trees become unbalanced because of the order in which the data items are inserted. If these key values are inserted randomly, the tree will be more or less balanced. However, if an ascending sequence (like 11, 18, 33, 42, 65, and so on) or a descending sequence is generated, all the values will be right children (if ascending) or left children (if descending) and the tree will be unbalanced.
+- When this happens, tree efficiency can be seriously degraded
+
+<img src="./images/2-tree-unbalanced.jpg" alt="Big-o-graph">
+
+- 
+- 
+- The Node Class
+```
+class Node {
+    int iData;          /** used as key value */
+    double fData;       /** other data */
+    node leftChild;
+    node rightChild;
+
+    public void displayNode() {}
+}
+Some programmers also include a reference to the node’s parent. This simplifies some operations but complicates others
+```
+- 
+- The Tree Class
+```
+class Tree {
+    private Node root;
+    public void find(int key) { }
+    public void insert(int id, double dd) { }
+    public void delete(int id) { }
+}
+```
+- Finding a Node
+```
+public Node find(int key) {
+    Node current = root;
+    while(current.iData != key) {
+        if(key < current.iData)          /** go left? */
+            current = current.leftChild;
+        else
+            current = current.rightChild; /** or go right? */
+        if(current == null)              /** if no child - reached dead end */
+            return null;
+    }
+    return current; /** return node so you can access any of the node's data */
+}
+```
+
+<img src="./images/2-tree-search.jpg" alt="Big-o-graph">
+
+- The time required to find a node depends on how many levels down it is situated.
+- In the above there can be up to 31 nodes, but no more than five levels
+- So you can find any node using a maximum of only five comparisons. This is O(log2N) time
+- 
+- Inserting a Node
+    - We start from the root node then reach the node whose left/right is [[[null]]]
+    - We add the value there
+- 
+- Traversing the Tree
+    - visiting each node in a specified order
+    - Three simple ways to traverse a tree: "preorder", "inorder" & "postorder"
+    - The most commonly used for binary search trees is "inorder"
+    - Inorder Traversal
+        <img src="./images/3-tree-traversal-inorder.jpg" alt="Big-o-graph">
+
+        - Will visit the nodes in ascending order, based on their key values
+        - If you want to create a sorted list of the data in a binary tree, this is one way to do it
+        - A recursive method to traverse the entire tree is called with a node as an argument
+            - Call itself to traverse the node's left subtree
+            - Visit the node
+            - Call itself to traverse the node's right subtree
+
+            ```
+            private void inOrder(node localRoot) {
+                if(localRoot != null) {
+                    inOrder(localRoot.leftChild);
+                    System.out.print(localRoot.iData + " ");
+                    inOrder(localRoot.rightChild);
+                }
+            }
+            ```
+    - Preorder & Postorder Traversals
+        - A binary tree (NOT a binary search tree) can be used to represent an algebraic expression that involves the binary arithmetic operators +, -, /, *.
+        - The root node holds an operator,and the other nodes hold either a variable name (like A, B, or C), or another operator.
+        <img src="./images/4-tree-traversal-pre-post-order.jpg" alt="Big-o-graph">
+        - preorder (prefix notation) would generate the expression
+        - Starting on the left, each operator is applied to the next two things in the expression
+        - postorder, contains the three steps   "ABC+*"
+            - Call itself to traverse the node's left subtree
+            - Call itself to traverse the node's right subtree
+            - Visit the node
+        - apply the last operator in the expression, *, to the first and second things.” The first thing is A, and the second thing is BC+
+        - Result "*A+BC"
+        - Which then converted to (B+C)
+        - Which then converted to A*(B+C)
+- Finding Maximum and Minimum Values
+    - Max = Rightmost child
+    - Min = Left most child or if doesn't have a left child then the last node itself
+    ```
+    public Node minimum()     // returns node with minimum key value {
+        Node current, last;
+        current = root;                   // start at root
+        while(current != null) {        // until the bottom,
+            last = current;                // remember node
+            current = current.leftChild;   // go to left child
+        }
+        return last;
+    }
+
+    For Max: Go to right child
+        current = current.rightChild;
+    ```
 
 
+- Deleting a Node
+    - various cases
+        - 1. The node to be deleted is a leaf (has no children)
+        - 2. The node to be deleted has one child
+        - 3. The node to be deleted has two children
+        - 
+    - 1. The node to be deleted is a leaf (has no children)
+        - simply change the appropriate child field in the node's parent to point to null
+        ```
+        public boolean delete(int key) { // delete node with given key (assumes non-empty list)
+            Node current = root;
+            Node parent = root;
+            boolean isLeftChild = true;
+            while(current.iData != key) {        // search for node
+                parent = current;
+                if(key < current.iData) { // go left?
+                    isLeftChild = true;
+                    current = current.leftChild;
+                } else {    // or go right?
+                    isLeftChild = false;
+                    current = current.rightChild;
+                }
+                if(current == null)             // end of the line, didn't find it
+                    return false;
+            }  // end while
+
+            if(current.leftChild==null && current.rightChild==null) { // found node to delete
+                if(current == root)             // if root,
+                    root = null;                 // tree is empty
+                else if(isLeftChild)
+                    parent.leftChild = null;     // disconnect from parent
+                else
+                    parent.rightChild = null;
+            }
+        }
+        ```
+    - 2. The node to be deleted has one child
+        - The one child of the node, to be deleted,, may be either a left or right child
+        - There is also a specialized situation: the node to be deleted may be the root, in which case it has no parent and is simply replaced by the appropriate subtree.
+
+        <img src="./images/5-tree-node-deletion.jpg" alt="Big-o-graph">
+
+        ```
+        // if no right child, replace with left subtree
+        else if(current.rightChild==null)
+            if(current == root)
+                root = current.leftChild;
+            else if(isLeftChild)           // left child of parent
+                parent.leftChild = current.leftChild;
+            else                           // right child of parent
+                parent.rightChild = current.leftChild;
+                
+            // if no left child, replace with right subtree
+        else if(current.leftChild==null)
+            if(current == root)
+                root = current.rightChild;
+            else if(isLeftChild)           // left child of parent
+                parent.leftChild = current.rightChild;
+            else                           // right child of parent
+                parent.rightChild = current.rightChild;
+        ```
+        - [IMPORTANT] you don't need to worry about moving them individually. In fact, they "move" only in the sense of being conceptually in different positions relative to the other nodes. As far as the program is concerned, only the reference to the root of the subtree has changed.
+    - 3. The node to be deleted has two children
+        - In the below picture we will try to delete 25
+        <img src="./images/6-tree-deleting-node-with-two-children.jpg" alt="Big-o-graph">
+        - replace the node with its inorder successor
+        <img src="./images/7-tree-deletenode-with-successor.jpg" alt="Big-o-graph">
+    - Finding the Successor
+        - First, the program goes to the original node's right child, which must have a key larger than the node
+        - Then it goes to this right child's left child (if it has one), and to this left child's left child, and so on, following down the path of left children
+        - The last left child in this path is the successor of the original node
+        <img src="./images/8-tree-finding-successor.jpg" alt="Big-o-graph">
+        - Because, you can find the minimum value in a subtree by following the path down all the left children
+        - Thus, this algorithm finds the minimum value that is greater than the original node; this is what we mean by its successor
+        - If the right child of the original node has no left children, this right child is itself the successor
+        <img src="./images/9A-tree-sucessor-with-2-node-no-subleft-children.jpg" alt="Big-o-graph">
+
+        ```
+        private node getSuccessor(node delNode) {
+            Node successorParent = delNode;
+            Node successor = delNode;
+            Node current = delNode.rightChild;
+            while(current != null) { // go to right child until no more left children,
+                successorParent = successor;
+                successor = current;
+                current = current.leftChild; // go to left child
+            }
+            if(successor != delNode.rightChild) { // if successor not right child, make connections
+                successorParent.leftChild = successor.rightChild;
+                successor.rightChild = delNode.rightChild;
+            }
+            return successor;
+        }
+        ```
+
+        ```
+        else { // two children, so replace with inorder successor
+            // get successor of node to delete (current)
+            Node successor = getSuccessor(current);
+            
+            // connect parent of current to successor instead
+            if(current == root)
+                root = successor;
+            else if(isLeftChild)
+                parent.leftChild = successor;
+            else
+                parent.rightChild = successor;
+            // connect successor to current's left child
+            successor.leftChild = current.leftChild;
+        }  // end else two children
+        // (successor cannot have a left child)
+        return true;
+        ```
+        - The code handles the below special cases
+        - The successor can be current's ["right child"], or it can be one of this ["right child's"] """left descendants"""
+        - Successor Is Right Child of delNode
+            - Things are simplified somewhat because we can simply move the subtree of which successor is the root & plug it in where the deleted node was
+            - Unplug current from the rightChild field of its parent
+            - Unplug current's left child from current, and plug it into the leftChild field of successor
+            ```
+            parent.rightChild = successor;
+            successor.leftChild = current.leftChild;
+            ```
+            <img src="./images/1B-tree.jpg" alt="Big-o-graph">
+            -  Step 1: If the node to be deleted, current, is the root, it has no parent so we merely set the root to the successor. Otherwise, the node to be deleted can be either a left or right child (Figure 8.19 shows it as a right child), so we set the appropriate field in its parent to point to successor. When delete() returns and current goes out of scope, the node referred to by current will have no references to it, so it will be discarded during Java's next garbage collection.
+            - Step 2: We set the left child of successor to point to current's left child.
+            What happens if the successor has children of its own? First of all, a successor node is guaranteed not to have a left child. This is true whether the successor is the right child of the node to be deleted or one of this right child's left children. How do we know this?
+
+            - Well, remember that the algorithm we use to determine the successor goes to the right child first and then to any left children of that right child. It stops when it gets to a node with no left child, so the algorithm itself determines that the successor can't have any left children. If it did, that left child would be the successor instead.
+            - You can check this out. No matter how many trees you make, you'll never find a situation in which a node's successor has a left child (assuming the original node has two children, which is the situation that leads to all this trouble in the first place).
+            - On the other hand, the successor may very well have a right child. This isn't much of a problem when the successor is the right child of the node to be deleted. When we move the successor, its right subtree simply follows along with it. There's no conflict with the right child of the node being deleted because the successor is this right child.
+
+        - Successor Is Left Descendant of Right Child of delNode
+            - 1. Plug the right child of successor into the leftChild field of the successor's parent
+            - 2. Plug the right child of the node to be deleted into the rightChild field of successor
+            - 3. Unplug current from the rightChild field of its parent, and set this field to point to successor
+            - 4. Unplug current's left child from current, and plug it into the leftChild field of successor.
+            <img src="./images/1C-Tree.jpg" alt="Big-o-graph">
+            - Steps 1 and 2 are handled in the getSuccessor() routine, while 3 and 4 are carried out in delete().
+            ```
+            1. successorParent.leftChild = successor.rightChild;
+            2. successor.rightChild = delNode.rightChild;
+            3. parent.rightChild = successor;
+            4. successor.leftChild = current.leftChild;
+            ```
+            - (Step 3 could also refer to the left child of its parent.) The numbers in Figure show the connections affected by the four steps. Step 1 in effect replaces the successor with its right subtree. Step 2 keeps the right child of the deleted node in its proper place (this happens automatically when the successor is the right child of the deleted node). Steps 1 and 2 are carried out in the if statement that ends the getSuccessor() method shown earlier.
+            ```
+            if(successor != delNode.rightChild) { // if successor not right child, make connections
+                successorParent.leftChild = successor.rightChild;
+                successor.rightChild = delNode.rightChild;
+            }
+            ```
+            - These steps are more convenient to perform here than in delete(), because in getSuccessor() we can easily figure out where the successor's parent is while we're descending the tree to find the successor.
+            - Steps 3 and 4 we've seen already; they're the same as steps 1 and 2 in the case where the successor is the right child of the node to be deleted, and the code is in the if statement at the end of delete()
+
+- Is Deletion Necessary?
+- Some programmers try to sidestep it altogether. They add a new Boolean field to the node class, called something like isDeleted. To delete a node, they simply set this field to true.
+- This approach is a bit of a cop-out, but it may be appropriate where there won't be many deletions in a tree.
+
+- The Efficiency of Binary Trees
+    - In a full tree, about half the nodes are on the bottom level.
+    - Thus, about half of all searches or insertions or deletions require finding a node on the lowest level.
+    - During a search we need to visit one node on each level
+    ```
+    Number of Nodes         Number of Levels
+        1                           1
+        3                           2
+        7                           3
+        15                          4
+        31                          5
+        ...                         ...
+        1,023                       10
+        ...                         ...
+        32,767                      15
+        1,048,575                   20
+        33,554,432                  25
+        1,073,741,824               30
+    ```
+    - The number of comparisons for a binary search was approximately equal to the base 2 logarithm of the number of cells in the array
+    - if we call the number of nodes in the first column N,
+    - and the number of levels in the second column L,
+    - we can say that N is 1 less than 2 raised to the power L, or N = 2^L - 1
+    - Adding 1 to both sides of the equation, we have N + 1 = 2^L
+    - This is equivalent to L = log(base 2)of(N + 1)
+    - In Big O notation we say such operations take O(logN) time.
+    - Thus, a tree provides high efficiency for all the common data storage operations.
+    - Traversing is not as fast as the other operations. However, traversals are probably not very commonly carried out in a typical large database. They're more appropriate when a tree is used as an aid to parsing algebraic or similar expressions, which are probably not too long anyway.
+
+### Trees Represented as Arrays
+- In the array approach, the nodes are stored in an array and are not linked by references. The position of the node in the array corresponds to its position in the tree. The node at index 0 is the root, the node at index 1 is the root's left child, and so on,
+- Progressing from left to right along each level of the tree
+- Every position in the tree, whether it represents an existing node or not, corresponds to a cell in the array. Adding a node at a given position in the tree means inserting the node into the equivalent cell in the array. Cells representing tree positions with no nodes are filled with 0 or null.
+- With this scheme, a node's children and parent can be found by applying some simple arithmetic to the node's index number in the array.
+- If a node's index number is index, this node's left child is
+2*index + 1
+
+its right child is
+2*index + 2
+
+and its parent is
+(index-1) / 2
+- In most situations, representing a tree with an array isn’t very efficient. Unfilled nodes and deleted nodes leave holes in the array, wasting memory. Even worse, when deletion of a node involves moving subtrees, every node in the subtree must be moved to its new location in the array, which is time-consuming in large trees.
+- However, if deletions aren't allowed, the array representation may be useful, especially if obtaining memory for each node dynamically is, for some reason, too time-consuming. The array rep
 
 
+### Duplicate Keys
+- a node with a duplicate key will be inserted as the right child of its twin
+- The problem is that the find() routine will find only the first of two (or more) duplicate nodes. The find() routine could be modified to check an additional data item, to distinguish data items even when the keys were the same, but this would be (at least somewhat) time-consuming.
+- One option is to simply forbid duplicate keys. When duplicate keys are excluded by the nature of the data (employee ID numbers, for example), there’s no problem. Otherwise, you need to modify the insert() routine to check for equality during the insertion process, and abort the insertion if a duplicate is found.
 
 
-
-
+### The Huffman Code
+- algorithm that uses a binary tree in a surprising way to compress data
+- There are several approaches to compressing data. For text, the most common approach is to reduce the number of bits that represent the most-used characters. In English, E is often the most common letter, so it seems reasonable to use as few bits as possible to encode it. On the other hand, Z is seldom used, so using a large number of bits is not so bad.
+- Suppose we use just two bits for E, say 01. We can't encode every letter of the alphabet in two bits because there are only four 2-bit combinations: 00, 01, 10, and 11. Can we use these four combinations for the four most-used characters? Unfortunately not. We must be careful that no character is represented by the same bit combination that appears at the beginning of a longer code used for some other character. For example, if E is 01, and X is 01011000, then anyone decoding 01011000 wouldn't know if the initial 01 represented an E or the beginning of an X.
+- This leads to a rule: No code can be the prefix of any other code.
 
 
 
