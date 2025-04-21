@@ -1421,21 +1421,170 @@ its right child is
 
 and its parent is
 (index-1) / 2
-- In most situations, representing a tree with an array isn’t very efficient. Unfilled nodes and deleted nodes leave holes in the array, wasting memory. Even worse, when deletion of a node involves moving subtrees, every node in the subtree must be moved to its new location in the array, which is time-consuming in large trees.
+- In most situations, representing a tree with an array isn't very efficient. Unfilled nodes and deleted nodes leave holes in the array, wasting memory. Even worse, when deletion of a node involves moving subtrees, every node in the subtree must be moved to its new location in the array, which is time-consuming in large trees.
 - However, if deletions aren't allowed, the array representation may be useful, especially if obtaining memory for each node dynamically is, for some reason, too time-consuming. The array rep
 
 
 ### Duplicate Keys
 - a node with a duplicate key will be inserted as the right child of its twin
 - The problem is that the find() routine will find only the first of two (or more) duplicate nodes. The find() routine could be modified to check an additional data item, to distinguish data items even when the keys were the same, but this would be (at least somewhat) time-consuming.
-- One option is to simply forbid duplicate keys. When duplicate keys are excluded by the nature of the data (employee ID numbers, for example), there’s no problem. Otherwise, you need to modify the insert() routine to check for equality during the insertion process, and abort the insertion if a duplicate is found.
+- One option is to simply forbid duplicate keys. When duplicate keys are excluded by the nature of the data (employee ID numbers, for example), there's no problem. Otherwise, you need to modify the insert() routine to check for equality during the insertion process, and abort the insertion if a duplicate is found.
 
 
 ### The Huffman Code
-- algorithm that uses a binary tree in a surprising way to compress data
-- There are several approaches to compressing data. For text, the most common approach is to reduce the number of bits that represent the most-used characters. In English, E is often the most common letter, so it seems reasonable to use as few bits as possible to encode it. On the other hand, Z is seldom used, so using a large number of bits is not so bad.
-- Suppose we use just two bits for E, say 01. We can't encode every letter of the alphabet in two bits because there are only four 2-bit combinations: 00, 01, 10, and 11. Can we use these four combinations for the four most-used characters? Unfortunately not. We must be careful that no character is represented by the same bit combination that appears at the beginning of a longer code used for some other character. For example, if E is 01, and X is 01011000, then anyone decoding 01011000 wouldn't know if the initial 01 represented an E or the beginning of an X.
-- This leads to a rule: No code can be the prefix of any other code.
+- Is an "Algorithm" that uses a binary tree in a surprising way to "compress data"
+- In English, E is often the most common letter & On the other hand, Z is seldom used
+
+
+- There are several approaches to compressing data
+- For text, the most common approach is
+- To reduce the number of bits that represent the most-used characters & using a large number of bits for less commonly used character
+
+
+- We must be careful that NOOO character is represented by the same bit combination
+- That appears at the beginning of an another longer code used for some other character
+- For example, if E is 01, and X is 01011000, then anyone decoding 01011000 wouldn't know if the initial 01 represented an E or the beginning of an X
+- RULE: NO CODE CAN BE THE PREFIX OF ANY OTHER CODE
+
+
+
+
+
+
+
+
+- Example: How "a b c d" coded & decoded using Huffman coding
+- How this works
+    - [STEP-1] Generate & Store the code table
+    - [STEP-2] Build Huffman Tree ['0' to the left branch and '1' to the right (arbitarily)]
+    - [STEP-3] Encoded the Sequence
+    - [STEP-4] Decoded the Sequence
+
+
+- Assume the frequency of these characters in a larger hypothetical text is as
+    ```
+        'a': 5 times
+        ' ': 4 (space) times
+        'b': 2 times
+        'c': 2 times
+        'd': 1 times
+    ```
+
+
+- Step 1: Build the Huffman Tree
+
+    Initial Nodes: Create a leaf node for each character and its frequency:
+    'a' (5 times)
+    ' ' (4 times)
+    'b' (2 times)
+    'c' (2 times)
+    'd' (1 times)
+
+- Merge Lowest Frequencies
+    - Merge 'c' (2 times) & 'd' (1 times) into a new node with frequency 3.
+    Let's arbitrarily assign '0' to the left branch and '1' to the right.
+
+    - Merge 'b' (2 times) and the 'cd' node (3) into a new node with frequency 5. Again,
+    assign '0' to the left ('b') and '1' to the right ('cd').
+
+    - Merge ' ' (4 times) and the 'bcd' node (5) into a new node with frequency 9.
+    Assign '0' to the left (' ') and '1' to the right ('bcd').
+
+    - Finally, merge 'a' (5 times) and the ' bcd' node (9) into the root node with frequency 14.
+    Assign '0' to the left ('a') and '1' to the right (' bcd').
+
+    - The Resulting Huffman Tree (Conceptual)
+         ```
+              14
+             /  \
+            0(a) 1( bcd)
+               /    \
+              0(' ')  1(bcd)
+                    /   \
+                   0(b) 1(cd)
+                         /  \
+                        0(c) 1(d)
+        ```
+
+
+- Assign Huffman Codes
+- Now, we traverse the tree from the root to each leaf node to determine the code:
+
+    ```
+    FROM ROOT
+
+    'a': 0      [Only 1st Left]
+    ' ': 10     [1st Right + 1st Left]
+    'b': 110    [1st Right + 2nd Right + 1st Left]
+    'c': 1110   [1st Right + 2nd Right + 3rd Right + 1st Left]
+    'd': 1111   [1st Right + 2nd Right + 3rd Right + 4th Right]
+    ```
+
+- Encode "a b c d"
+    - So, the encoded sequence for "a b c d" would be: "010110101110101111"
+    - So, the encoded sequence for "a b c d" would be: "0-10-110-10-1110-10-1111"
+
+
+
+
+- Decode the Encoded Sequence "010110101110101111"
+- To decode, we start from the beginning of the encoded sequence & traverse the Huffman tree based on the bits:
+```
+'0': Start at the root. Read '0', go left. We reach the leaf node 'a'. So, the first character is 'a'
+
+
+'1': Go right from the root
+'0': Go left. We reach the leaf node ' '. So, the second character is ' '
+
+
+'1': Go right from the root.
+'1': Go right.
+'0': Go left. We reach the leaf node 'b'. So, the third character is 'b'.
+
+
+'1': Go right from the root.
+'0': Go left. We reach the leaf node ' '. So, the fourth character is ' '.
+
+
+'1': Go right from the root.
+'1': Go right.
+'1': Go right.
+'0': Go left. We reach the leaf node 'c'. So, the fifth character is 'c'.
+
+
+'1': Go right from the root.
+'0': Go left. We reach the leaf node ' '. So, the sixth character is ' '.
+
+
+'1': Go right from the root.
+'1': Go right.
+'1': Go right.
+'1': Go right. We reach the leaf node 'd'. So, the seventh character is 'd'.
+
+
+By decoding the bit sequence, we successfully reconstruct the original sequence: "a b c d".
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
