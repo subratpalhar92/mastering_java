@@ -1723,6 +1723,212 @@ If P is red, there are two possibilities:
 
 
 
+## 2-3-4 Trees and External Storage
+- In a Binary-Tree, if we allow more data items and children per node, the result is a multiway tree
+- 
+- An 2-3-4 Tree is a multiway trees
+- can have up to four children & three data items per node
+- 
+- An B-tree is another kind of multiway tree that's particularly useful for organizing data in external storage (disk drive)
+- A node in a B-tree can have dozens or hundreds of children
+- 
+- 
+- 
+
+### 2-3-4 Trees
+- <img src="./images/1T-234-Tree.jpg"></img>
+- They're balanced trees like red-black trees
+- They're slightly less efficient than red-black trees but easier to program
+- In a 2-3-4 tree all the leaf nodes are always on the same level
+- 
+- node with 1 data item always has 2 children
+- node with 2 data item always has 3 children
+- node with 3 data item always has 4 children
+- child links is L = data item D + 1
+- 
+- A leaf node, by contrast, has no children, but it can nevertheless contain 1, 2, or 3 data items
+- Empty nodes are not allowed
+- In a 2-3-4 tree, on the other hand, nodes with a single link are not permitted
+- 
+- A node with two links is called a 2-node, a node with three links is a 3-node, but there is no such thing as a 1-node
+- 
+- If a 234 tree have 4 levels then it will have a total of = 1 + 4 + 16 + 64 nodes
+- 
+- 2-3-4 Tree Organization
+- The data items in a node are arranged in ascending key order
+-  All children in the subtree """rooted at child 0""" have key values < key-0
+- children in the subtree ""rooted at child 1""" have key values > key-0 < key-1
+- Subtree """rooted at child 2""" have key values > key 1 < key-2
+- children in the subtree """rooted at child 3""" have key values > key-2
+    - <img src="./images/1U-234-Tree.jpg"></img>
+    - <img src="./images/1V-234-Tree.jpg"></img>
+- Upper-level nodes are often not full; that is, they may contain only one or two data items instead of three
+- Also, notice that the tree is balanced. It retains its balance even if you insert a sequence of data in ascending (or descending) order. The 2-3-4 tree’s self-balancing capability results from the way new data items are inserted
+- 
+- Searching
+- You start at the root and, unless the search key is found there, select the link that leads to the subtree with the appropriate range of values.
+- 
+- Insertion
+- New data items are always inserted in leaves, which are on the bottom row of the tree. If items were inserted in nodes with children, the number of children would need to be changed to maintain the structure of the tree, which stipulates that there should be one more child than data items in a node.
+- Insertion into a 2-3-4 tree is sometimes quite easy and sometimes rather complicated. In any case the process begins by searching for the appropriate leaf node.
+- If no full nodes are encountered during the search, insertion is easy. When the appropriate leaf node is reached, the new data item is simply inserted into it.
+- 
+    - <img src="./images/1W-234-Tree.jpg"></img>
+- Insertion may involve moving one or two other items in a node so the keys will be in the correct order after the new item is inserted. In this example the 23 had to be shifted right to make room for the 18.
+- 
+- Node Splits
+    - Insertion becomes more complicated if a full node is encountered on the path down to the insertion point. When this happens, the node must be split. It's this splitting process that keeps the tree balanced
+    - We assume the node being split is not the root; we'll examine splitting the root later
+    - <img src="./images/1X-234-Tree.jpg"></img>
+    - Let's name the data items in the node that's about to be split A, B, and C
+    - A new, empty node is created. It's a sibling of the node being split, and is placed to its right.
+    - Data item C is moved into the new node.
+    - Data item B is moved into the parent of the node being split.
+    - Data item A remains where it is.
+    - The rightmost two children are disconnected from the node being split and connected to the new node.
+    - 
+    - Notice that the effect of the node split is to move data up and to the right. It is this rearrangement that keeps the tree balanced.
+    - 
+    - Here the insertion required only one node split, but more than one full node may be encountered on the path to the insertion point. When this is the case, there will be multiple splits.
+    - 
+- Splitting the Root
+    - When a full root is encountered at the beginning of the search for the insertion point, the resulting split is slightly more complicated:
+        - A new root is created. It becomes the parent of the node being split.
+        - A second new node is created. It becomes a sibling of the node being split.
+        - Data item C is moved into the new sibling.
+        - Data item B is moved into the new root.
+        - Data item A remains where it is.
+        - The two rightmost children of the node being split are disconnected from it and connected to the new right-hand node.
+        - <img src="./images/1Z-234-Tree.jpg"></img>
+    - 
+- Splitting on the Way Down
+    - Notice that, because all full nodes are split on the way down, a split can't cause an effect that ripples back up through the tree. The parent of any node that's being split is guaranteed not to be full and can therefore accept data item B without itself needing to be split. Of course, if this parent already had two children when its child was split, it will become full. However, that just means that it will be split when the next search encounters it.
+    - <img src="./images/2A-234-Tree.jpg"></img>
+    - 
+- Java Code for a 2-3-4 Tree
+    - There are 3 classes: "DataItem", "Node", "Tree234"
+    - DataItem Class
+        - represent the data items stored in nodes
+        - In a real-world program it's an object : "Person", "Book" etc.
+    - Node Class
+        - contains two arrays: childArray and itemArray.
+        - first is four cells long & holds references to whatever children the node might have
+        - The second is three cells long & holds references to objects of type DataItem contained in the node
+        - data items in itemArray comprise an """ordered array"""
+        - We can chosen to store the number of items currently in the node ~ & ~ the node's parent
+        - ordered array >>> findItem(), insertItem(), and removeItem()
+    - Tree234 Class
+        - Has only one field: root, of type Node. All operations start at the root, so that's all a tree needs to remember
+        - Searching
+            -  It starts at the root and at each node calls that node's findItem() routine to see whether the item is there. If so, it returns the index of the item within the node's item array.
+            - If it can't find the item in the current node, and the current node isn't a leaf, find() calls the getNextChild() method
+            - If find() is at a leaf and can't find the item, the search has failed, so it returns -1.
+            - 
+        - Inserting
+            - The insert() method starts with code similar to find(), except that it splits a full node if it finds one. Also, it assumes it can't fail; it keeps looking, going to deeper and deeper levels, until it finds a leaf node.
+        - Splitting
+            - The split() method is the most complicated in this program. It is passed the node that will be split as an argument. First, the two rightmost data items are removed from the node and stored. Then the two rightmost children are disconnected; their references are also stored.
+            - A new node, called newRight, is created. It will be placed to the right of the node being split. If the node being split is the root, an additional new node is created: a new root.
+            - Next, appropriate connections are made to the parent of the node being split. It may be a pre-existing parent,
+            - or if the root is being split, it will be the newly created root node.
+            - 
+            - Assume the three data items in the node being split are called A, B, and C. Item B is inserted in this parent node. If necessary, the parent's existing children are disconnected and reconnected one position to the right to make room for the new data item and new connections. The newRight node is connected to this parent
+            - 
+            - Now the focus shifts to the newRight node. Data Item C is inserted in it, and child 2 and child 3, which were previously disconnected from the node being split, are connected to it. The split is now complete, and the split() routine returns.
+        - 
+#### 2-3-4 Trees and Red-Black Trees
+- The 2-3-4 trees and red-black trees are equivalent
+- One can be transformed into the other by the application of a few simple rules
+- and even the operations needed to keep them balanced are equivalent. Mathematicians would say they were isomorphic.
+- Historically, the 2-3-4 tree was developed first; later the red-black tree evolved from it.
+- <img src="./images/2B-234-Tree.jpg"></img>
+    - Transform any 2-node in the 2-3-4 tree into a black node in the red-black tree
+    - 
+    - Transform any 3-node into a child node and a parent node.
+    - The child node has two children of its own: either W and X or X and Y. The parent has one other child: either Y or W. It doesn't matter which item becomes the child and which the parent. The child is colored red and the parent is colored black.
+    - 
+    - Transform any 4-node into a parent and two children
+    - The first child has its own children W and X; the second child has children Y and Z. As before, the children are colored red and the parent is black.
+    - 
+- <img src="./images/2C-234-Tree.jpg"></img>
+    - shows a 2-3-4 tree and the corresponding red-black tree obtained by applying these transformations. Dotted lines surround the subtrees that were made from 3-nodes and 4-nodes
+    - The red-black rules are automatically satisfied by the transformation. Check that this is so: Two red nodes are never connected, and there is the same number of black nodes on every path from root to leaf (or null child).
+    - 
+    - You can say that a 3-node in a 2-3-4 tree is equivalent to a parent with a red child in a red-black tree, and a 4-node is equivalent to a parent with two red children.
+    - It follows that a black parent with a black child in a red-black tree does not represent a 3-node in a 2-3-4 tree; it simply represents a 2-node with another 2-node child.
+    - Similarly, a black parent with two black children does not represent a 4-node.
+
+- Operational Equivalence
+    - 4-Node Splits and Color Flips
+        - As you descend a 2-3-4 tree searching for the insertion point for a new node, you split each 4-node into two 2-nodes. In a red-black tree you perform color flips.
+        - How are these operations equivalent?
+        - <img src="./images/2D-234-Tree.jpg"></img>
+        - The dotted line surrounds the equivalent of the 4-node. A color flip results in the red-black tree of
+        - Now nodes 40 and 60 are black and 50 is red
+        - Thus, 50 and its parent form the equivalent of a 3-node, as shown by the dotted line. This is the same 3-node formed by the node split
+        - Thus, we see that splitting a 4-node during the insertion process in a 2-3-4 tree is equivalent to performing color flips during the insertion process in a red-black tree.
+    - 3-Node Splits and Rotations
+        - When a 3-node in a 2-3-4 tree is transformed into its red-black equivalent, two arrangements are possible,
+        - Either of the two data items can become the parent.
+        - Depending on which one is chosen, the child will be either a left child or a right child, and the slant of the line connecting parent and child will be either left or right.
+        - 
+        - Both arrangements are valid; however, they may not contribute equally to balancing the tree. Let's look at the situation in a slightly larger context.
+        - 
+        - <img src="./images/2E-234-Tree.jpg"></img>
+        - Picture 'a' shows a 2-3-4 tree,
+        - 'b' and 'c' show two equivalent red-black trees derived from the 2-3-4 tree by applying the transformation rules.
+        - The difference between them is the choice of which of the two data items in the 3-node to make the parent: in b) 80 is the parent; in c) it's 70.
+        - 
+        - Although these arrangements are equally valid, you can see that the tree in b) is not balanced, while that in c) is. Given the red-black tree in b), we would want to rotate it to the right (and perform two color changes) to balance it. Amazingly, this rotation results in the exact same tree shown in c).
+        - 
+        - Thus, we see an equivalence between rotations in red-black trees and the choice of which node to make the parent when transforming 2-3-4 trees to red-black trees. Although we don't show it, a similar equivalence can be seen for the double rotation necessary for inside grandchildren.
+        - 
+- Efficiency of 2-3-4 Trees
+    - It's harder to analyze the efficiency of a 2-3-4 tree than a red-black tree, but the equivalence of red-black trees and 2-3-4 trees gives us a starting point.
+    - Speed
+        - in a red-black tree one node on each level must be visited during a search, whether to find an existing node or insert a new one. The number of levels in a red-black tree (a balanced binary tree) is about log2(N+1), so search times are proportional to this.
+        - 
+        - One node must be visited at each level in a 2-3-4 tree as well, but the 2-3-4 tree is shorter (has fewer levels) than a red-black tree with the same number of data items.
+        - where the 2-3-4 tree has three levels and the red-black tree has five.
+        - More specifically, in 2-3-4 trees there are up to four children per node. If every node were full, the height of the tree would be proportional to log4N. Logarithms to the base 2 and to the base 4 differ by a constant factor of 2. Thus, the height of a 2-3-4 tree would be about half that of a red-black tree, provided that all the nodes were full. Since they aren’t all full, the height of the 2-3-4 tree is somewhere between log2(N+1) and log2(N+1)/2. The reduced height of the 2-3-4 tree decreases search times slightly compared with red-black trees.
+        - On the other hand, there are more items to examine in each node, which increases the search time. Because the data items in the node are examined using a linear search, this multiplies the search times by an amount proportional to M, the average number of items per node. The result is a search time proportional to M*log4N.
+        - Some nodes contain one item, some two, and some three. If we estimate that the average is two, search times will be proportional to 2*log4N. This is a small constant number that can be ignored in Big O notation.
+        - Thus, for 2-3-4 trees the increased number of items per node tends to cancel out the decreased height of the tree. The search times for a 2-3-4 tree and for a balanced binary tree such as a red-black tree are approximately equal, and are both O(logN).
+        - 
+    - Storage Requirements
+        - Each node in a 2-3-4 tree contains storage for three references to data items and four references to its children. This space may be in the form of arrays, as shown in tree234.java, or of individual variables. Not all this storage is used. A node with only one data item will waste 2/3 of the space for data and 1/2 the space for children. A node with two data items will waste 1/3 of the space for data and 1/4 of the space for children; or put another way, it will use 5/7 of the available space.
+        - 
+        - If we take two data items per node as the average utilization, about 2/7 of the available storage is wasted.
+        - 
+        - You might imagine using linked lists instead of arrays to hold the child and data references, but the overhead of the linked list compared with an array, for only three or four items, would probably not make this a worthwhile approach.
+        - 
+        - Because they're balanced, red-black trees contain few nodes that have only one child, so almost all the storage for child references is used. Also, every node contains the maximum number of data items, which is one. This makes red-black trees more efficient than 2-3-4 trees in terms of memory usage.
+        - 
+        - In Java, which stores references to objects instead of the objects themselves, this difference in storage between 2-3-4 trees and red-black trees may not be important, and the programming is certainly simpler for 2-3-4 trees. However, in languages that don’t use references this way, the difference in storage efficiency between red-black trees and 2-3-4 trees may be significant.
+        - 
+
+### 2-3 Trees
+- We'll discuss 2-3 trees briefly here because they are historically important and because they are still used in many applications. Also, some of the techniques used with 2-3 trees are applicable to B-trees, which we'll examine in the next section. Finally, it's interesting to see how a small change in the number of children per node can cause a large change in the tree's algorithms.
+- 2-3 trees are similar to 2-3-4 trees except that, as you might have guessed from the name, they hold one less data item and have one less child
+- B-trees (of which the 2-3-4 tree is a special case)
+- In many respects the operation of 2-3 trees is similar to that of 2-3-4 trees. Nodes can hold one or two data items and can have zero, one, two, or three children. Otherwise, the arrangement of the key values of the parent and its children is the same. Inserting a data item into a node is potentially simplified because fewer comparisons and moves are potentially necessary. As in 2-3-4 trees, all insertions are made into leaf nodes, and all leaf nodes are on the bottom level.
+- 
+- Node Splits
+    - 
+
+
+
+
+
+
+
+
+
+### External Storage
+
+
+### B-Trees
+
 
 
 
