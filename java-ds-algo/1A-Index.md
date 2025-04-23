@@ -1571,13 +1571,154 @@ By decoding the bit sequence, we successfully reconstruct the original sequence:
 
 
 
+## Red-Black Trees
+- The binary tree become much slower if data is inserted in already-sorted order (17, 21, 28, 36,...) or inversely sorted order (36, 28, 21, 17,...)
+- When the values to be inserted are already ordered, a binary tree becomes unbalanced
+- With an unbalanced tree, the ability to quickly find (or insert or delete) a given element is lost
+- There are other ways to ensure that trees are balanced
+- 
+- The red-black tree, is a binary search tree with some added features
+- 
+### Insertion
+- Top-Down Insertion
+- The approach to insertion that we'll discuss is called top-down insertion
+- This means that some ""structural changes may be made"" to the tree as the search routine descends the tree looking for the place to insert the node
+- 
+- Another approach is bottom-up insertion
+- This involves "finding the place to insert the node" ~&&~ "then working back up through the tree making structural changes"
+- Bottom-up insertion is less efficient because two passes must be made through the tree
+- 
+### Balanced & Unbalanced Trees
+- Unbalanced Trees
+    <img src="./images/1L-RB-TREE.jpg" alt="Big-o-graph">
+
+- When we insert a series of nodes whose keys are in either ascending or descending order
+- The nodes arrange themselves in a line with no branches. Because each node is larger than the previously inserted one, every node is a right child, so all the nodes are on one side of the root. The tree is maximally unbalanced. If you inserted items in descending order, every node would be the left child of its parent, and the tree would be unbalanced on the other side
+- Degenerates to O(N)
+    - It becomes a linked list (1D)
+    - you must now search through (on the average) half the items to find the one you're looking for :: the speed of searching is reduced to O(N), instead of O(logN)
+    - Searching through 10,000 items in such an unbalanced tree would require an average of 5,000 comparisons
+    - With a realistic amount of random data, it's not likely a tree would become seriously unbalanced. However, there may be runs of sorted data that will partially unbalance a tree. Searching partially unbalanced trees will take time somewhere between O(N) and O(logN), depending on how badly the tree is unbalanced.
+
+- Balance to the Rescue
+    - In a ""red-black tree"", balance is achieved during insertion (and also deletion)
+    - As an item is being inserted, the insertion routine checks that certain characteristics of the tree are not violated. If they are, it takes corrective action, restructuring the tree as necessary
+    - By maintaining these characteristics, the tree is kept balanced
+
+
+### Red-Black Tree Characteristics
+- The nodes are colored
+- During insertion and deletion, rules are followed that preserve various arrangements of these colors
+
+### Colored Nodes (HUMANIZED)
+- In a red-black tree, The rules are
+    - 1. Every node is either red or black
+    - 2. The root is always black
+    - 3. If a node is red, its children must be black (although the converse isn't necessarily true) (black root can follow black child)
+    - 4. Every path from the root to a leaf, or to a null child, must contain the same number of black nodes.
+    - 
+    - The """"null child"""" referred to in Rule 4 is a place where a child could be attached to a non-leaf node.
+    - In other words, it's the potential left child of a node with a right child, or the potential right child of a node with a left child.
+    - This will make more sense as we go along.
+    - 
+    - The number of black nodes on a path from root to leaf is called the black height. Another way to state Rule 4 is that the black height must be the same for all paths from the root to a leaf.
+- What actions you can take to fix things if one of the red-black rules is broken.
+    - Duplicate Keys
+        - What happens if there's more than one data item with the same key? This presents a slight problem in red-black trees. It's important that nodes with the same key are distributed on both sides of other nodes with the same key. That is, if keys arrive in the order 50, 50, 50, you want the second 50 to go to the right of the first one, and the third 50 to go to the left of the first one. Otherwise, the tree becomes unbalanced.
+        - Distributing nodes with equal keys could be handled by some kind of randomizing process in the insertion algorithm. However, the search process then becomes more complicated if all items with the same key must be found.
+        - It's simpler to outlaw items with the same key
+        - In this discussion we'll assume duplicates aren't allowed
+    - Fixing Rule Violations
+        - There are two, and only two, possible actions you can take:
+        - You can change the colors of nodes.
+        - You can perform rotations
+            - A rotation is a rearrangement of the nodes that, one hopes, leaves the tree more balanced
+            - Rotation Left (ROL) & Rotation Right (LOR)
+            - In a binary search tree the left children of any node have key values less than the node, while its right children have key values greater than or equal to the node
+            - If the rotation didn't maintain a valid binary search tree, it wouldn't be of much use, because the search algorithm, as we saw in the preceding chapter, relies on the search-tree arrangement.
+            - Note that color rules and node color changes are used only to help decide when to perform a rotation.
+            - Fiddling with the colors doesn't accomplish anything by itself; IT'S THE ROTATION THATS'S THE HEAVY HITTER
+        - For example if you have a balance tree
+            <img src="./images/1N-RB-Tree.jpg">
+        - Do a Right Rotation
+            <img src="./images/1O-RB-Tree.jpg">
+            Now the tree become Unbalance
+            Keeping pointer at 25 & doing an ROL rotation will fix the tree
+        - Now ading further node to the earlier balance tree ,, requires a color flip
+        - & it will violates the 4th rule
+            <img src="./images/1P-RB-Tree.jpg">
+            Changing RED to Balck will cause :: Error: Black heights differ
+        - The term black height is used to describe the number of black nodes from the root to a given node. In the below Figure the black height of 50 is 1, of 25 is still 1, of 12 is 2 & so on
+        - <img src="./images/1Q-RB-Tree.jpg">
+        - As Rule 4 specifies all paths,, go from the root "to any leaf" o/r "to any null children" must have the same number of black nodes
+        - 
+        - Rotations must do two things at once:
+            - Raise some nodes and lower others to help balance the tree.
+            - Ensure that the characteristics of a binary search tree are not violated
+        - 
+    - [1] Simple Rotations
+        - The nodes themselves aren't rotated; it's the relationship between them that changes
+        - If we're doing a right rotation (CLOCK WISE), this "top" node will move down and to the right, into the position of its right child. Its left child will move up to take its place
+        - 
+        - One node is chosen as the "top" of the rotation
+        - Remember that the top node isn't the "center" of the rotation
+        - 
+        - any node can be the top node in a rotation, provided it has the appropriate child
+        - If you're doing a right rotation (CLOCK WISE), the top node has a left child. Otherwise, there's nothing to rotate into the top spot
+        - If you're doing a left rotation (ANTI CLOCK WISE), the top node must have a right child
+        - 
+    - The Weird Crossover Node
+        - <img src="./images/1R-RB-Tree.jpg">
+        - In the origional position
+            - The inside grandchild of the top node, 50
+            - The 12 is an outside grandchild
+        - Place the arrow on 50 & the right rotation will cause 37 moves across,, The rotation has caused a violation of Rule 4
+        - left child of the top node in a right rotation) is always disconnected from its parent and reconnected to its former grandparent. It's like becoming your own uncle
+        -  
+    - Subtrees on the Move
+        - <img src="./images/1S-RB-Tree.jpg">
+        - Position the arrow on the root, 50. Now press RoR
+        - A lot of nodes have changed position
+        - You'll see the Error: root must be black
+    - 
+### Inserting a New Node (COMPUTERIZED)
+- red-black tree's insertion routine uses rotations and the color rules to maintain the tree's balance.
+- Variable X, P, and G 
+    - X is a node that has caused a rule violation
+    - Sometimes X refers to a newly inserted node,
+    - and sometimes to the child node when a parent and child have a red-red conflict
+    - X is a particular node.
+    - 
+    - P is the parent of X
+    - G is the grandparent of X (the parent of P)
+```
+To find the insertion point
+
+You perform a color flip whenever you find a black node with two red children (a violation of Rule 2)
+
+Sometimes the flip causes a red-red conflict (a violation of Rule 3)
+Call the red child X and the red parent P
+The conflict can be fixed with a single rotation or a double rotation,
+depending on whether X is an outside or inside grandchild of G
 
 
 
+After you've inserted the new node X,
+if P is black, you simply attach the new red node
+If P is red, there are two possibilities:
+    1] X can be an outside or inside grandchild of G
+        You perform two color changes 
+    2] If X is an outside grandchild,
+        You perform one rotation, and if it's an inside grandchild, you perform two
+        This restores the tree to a balanced state.
+```
+- So it drawns 3 points
+    - 1. Color flips on the way down
+    - 2. Rotations after the node is inserted
+    - 3. Rotations on the way down
 
-
-
-
+- [1.] Color Flips on the Way Down
+    - @TODO
 
 
 
