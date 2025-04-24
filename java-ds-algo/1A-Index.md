@@ -1914,20 +1914,263 @@ If P is red, there are two possibilities:
 - In many respects the operation of 2-3 trees is similar to that of 2-3-4 trees. Nodes can hold one or two data items and can have zero, one, two, or three children. Otherwise, the arrangement of the key values of the parent and its children is the same. Inserting a data item into a node is potentially simplified because fewer comparisons and moves are potentially necessary. As in 2-3-4 trees, all insertions are made into leaf nodes, and all leaf nodes are on the bottom level.
 - 
 - Node Splits
+    - Here insertion isn't similar to a 2-3-4 tree, there is a surprising difference in the way splits are handled
+    - In either kind of tree (2-3-4 or 2-3) a node split requires "three data items":
+        - one to be kept in the node being split,
+        - one to move right into the new node, and 
+        - one to move up to the parent node.
+        - A full node in a 2-3-4 tree has three data items, which are moved to these three destinations.
+        - However, a full node in a 2-3 tree has only two data items.
+        - Where can we get a third item? We must use the new item: the one being inserted in the tree
+        - In a 2-3-4 tree the new item is inserted after all the splits have taken place. In the 2-3 tree it must participate in the split. It must be inserted in a leaf, so no splits are possible on the way down. If the leaf node where the new item should be inserted is not full, the new item can be inserted immediately, but if the leaf node is full, it must be split. Its two items and the new item are distributed among these three nodes: the existing node, the new node, and the parent node. If the parent is not full, the operation is complete (after connecting the new node)
+        - <img src="./images/2F-234-Tree.jpg"></img>
+        - However, if the parent is full, it too must be split. Its two items and the item passed up from its recently split child must be distributed among the parent, a new sibling of the parent, and the parent's parent.
+        - <img src="./images/2G-234-Tree.jpg"></img>
+        - If the parent’s parent (the grandparent of the leaf node) is full, it too must be split. The splitting process ripples upward until either a non-full parent or the root is encountered. If the root is full, a new root is created that is the parent of the old root,
+        - <img src="./images/2H-234-Tree.jpg"></img>
+        - Below picture shows a node split that ripples up through a tree until it reaches the root.
+        - <img src="./images/2I-234-Tree.jpg"></img>
+        - 
+
+- Implementation In Java
+    - The insertion routine doesn't care if the nodes it encounters are full or not. It searches down through the tree until it finds the appropriate leaf. If the leaf is not full, it inserts the new value. However, if the leaf is full, it must rearrange the tree to make room. To do this, it calls a split() method
+    - Arguments to this method can be the full leaf node and the new item. It will be the responsibility of split() to make the split and insert the new node in the new leaf.
+    - If split() finds that the leaf's parent is full, it calls itself recursively to split the parent. It keeps calling itself until a non-full leaf or the root is found. The return value of split() is the new right node, which can be used by the previous incarnation of split().
+    - Coding the splitting process is complicated by several factors. In a 2-3-4 tree the three items to be distributed are already sorted, but in the 2-3 tree the new item's key must be compared with the two items in the leaf; the three are then distributed according to the results of the comparison.
+    - Also, splitting a parent creates a second parent, so now we have a left (the original) parent and a new right parent. We need to change the connections from a single parent with three children to two parents with two children each. There are three cases, depending on which child (0, 1, or 2) is being split. This situation is shown in Figure
+    - the new nodes created as the result of a split are shaded, and new connections are shown as wiggly lines
+    <img src="./images/2J-234-Tree.jpg"></img>
+    - 
+### External Storage
+- 2-3-4 trees are examples of multiway trees, which have more than two children and more than one data item. Another kind of multiway tree, the B-tree, is useful when data resides in external storage. External storage typically refers to some kind of disk system, such as the hard disk found in most desktop computers or servers.
+- #external file handling. #organizing external data: sequential ordering #indexing
+- we'll begin by describing various aspects of external file handling. We'll talk about a simple approach to organizing external data: sequential ordering. Finally, we'll discuss B-trees and explain why they work so well with disk files. We'll finish with another approach to external storage, indexing, which can be used alone or with a B-tree.
+- We'll also touch on other aspects of external storage, such as searching techniques. In the next chapter we'll mention a different approach to external storage: hashing
+- Accessing External Data
+    - in many situations the amount of data to be processed is too large to fit in main memory all at once. In this case a different kind of storage is necessary. Disk files generally have a much larger capacity than main memory; this is made possible by their lower cost per byte of storage.
+    - Disk files can retain data indefinitely with the power off
+    - 
+    - Disk files can be much slower than main memory
+    - To access a particular piece of data on a disk drive, the read-write head must first be moved to the correct track. This is done with a stepping motor or similar device; it's a mechanical activity that requires several milliseconds (thousandths of a second).
+    - Once the correct track is found, the read-write head must wait for the data to rotate into position. On the average, this takes half a revolution. Even if the disk is spinning at 10,000 revolutions per minute, about 3 more milliseconds pass before the data can be read.
+    - Thus, disk access times of around 10 milliseconds are common. This is something like 10,000 times slower than main memory.
+    - 
+    - One Block at a Time
+    - When the read-write head is correctly positioned and the reading (or writing) process begins, the drive can transfer a large amount of data to main memory fairly quickly
+    - For this reason, and to simplify the drive control mechanism, data is stored on the disk in chunks called blocks, pages, allocation units, or some other name, depending on the system. We'll call them blocks.
+    - 
+    - The disk drive always reads or writes a minimum of one block of data at a time.
+    - Block size varies, depending on the operating system, the size of the disk drive, and other factors, but it is usually a power of 2.
+    - Let's assume a block size of (2^13) = 8,192 bytes
+    - 
+    - For example a phone book for a medium-sized city-perhaps 500,000 entries
+    - Let's say an entry is stored as a record requiring 512 bytes
+    - The result is a file size of 500,000 * 512, which is 256,000,000 bytes or 256 megabytes.
+    - 
+    - Thus, our phone book database will require 256,000,000 bytes divided by 8,192 bytes per block, which is 31,250 blocks.
+    - Your software is most efficient when it specifies a read or write operation that's a multiple of the block size.
+    - If you ask to read 100 bytes, the system will read one block, 8,192 bytes, and throw away all but 100.
+    - If you ask to read 8,200 bytes, it will read two blocks, or 16,384 bytes, and throw away almost half of them
+    - By organizing your software so that it works with a block of data at a time, you can optimize its performance.
+    - 
+    - Assuming our each phone book record size of 512 bytes, you can store 8192/512 = 16 records in a block
+    - Thus, for maximum efficiency it's important to read 16 records at a time (or multiples of this number)
+    - Notice that it's also useful to make your record size a multiple of 2. That way, an integral number of them will always fit in a block.
+    - It follows that the larger the block, the more efficiently you can read or write a single record (assuming you use all the records in the block).
+    - .
+     <img src="./images/2K-234-Tree.jpg"></img>
+    - 
+- Sequential Ordering
+    - One way to arrange the phone book data in the disk file would be to order all the records according to some key, say alphabetically by last name.
+- Searching
+    - To search a sequentially ordered file for a particular last name such as Smith, you could use a binary search. You would start by reading a block of records from the middle of the file (S is expected somewhere in middle)
+    - The 16 records in the block are all read at once into an 8,192-byte buffer in main memory
+
+    - If the keys of these records are too early in the alphabet (Keller, for example), you would go to the 3/4 point in the file (Prince) and read a block there; if the keys were too late, you'd go to the 1/4 point (DeLeon). By continually dividing the range in half, you would eventually find the record you were looking for.
+
+    - As we saw in Chapter 2, a binary search in main memory takes log-base-2-of(N) comparisons
+    - which for 500,000 items would be about 19.
+    - If every comparison took, say 10 microseconds, this would be 190 microseconds, OR ~ 2/10,000 of a SECOND
+
+    - 
+    - 
     - 
 
+    - However, we're now dealing with data stored on a disk. Because each disk access is so time-consuming
+    - It's more important to focus on how many disk accesses are necessary than on how many individual records there are
+    - The time to read a block of records will be very much larger than the time to search the 16 records in the block once they're in in-memory
 
+    - Disk accesses are much slower than memory accesses, but on the other hand we access a block at a time, and there are far fewer blocks than records. In our example there are 31,250 blocks.
+    - Log2 of 31,250 is about 15, so in theory we'll need about 15 disk accesses to find the record we want.
+    
+    - In practice this number is reduced somewhat because we read 16 records at once. In the beginning stages of a binary search, it doesn't help to have multiple records in memory because the next access will be in a distant part of the file.
+    - However, when we get close to the desired record, the next record we want may already be in memory because it's part of the same block of 16
+    - This "MAY" reduce the number of comparisons by two or so. Thus, we'll need about 13 disk accesses (15-2), which at 10 milliseconds per access requires about 130 milliseconds, or 1/7 second
+    - This is much slower than in-memory access, but still not too bad.
 
+- Insertion
+    - Unfortunately, the picture is much worse if we want to insert (or delete) an item from a sequentially ordered file. Because the data is ordered, both operations require moving half the records on the average, and therefore about half the blocks.
 
+    - Moving each block requires two disk accesses: one read and one write. When the insertion point is found, the block containing it is read into a memory buffer.
+    - The last record in the block is saved, and the appropriate number of records are shifted up to make room for the new one, which is inserted. Then the buffer contents are written back to the disk file.
 
+    - Next, the second block is read into the buffer. Its last record is saved, all the other records are shifted up, and the last record from the previous block is inserted at the beginning of the buffer. Then the buffer contents are again written back to disk. This process continues until all the blocks beyond the insertion point have been rewritten.
 
+    - Assuming there are 31,250 blocks, we must read and write (on the average) 15,625 of them, which at 10 milliseconds per read and write requires more than 5 minutes to insert a single entry. This won't be satisfactory if you have thousands of new names to add to the phone book.
 
-
-
-### External Storage
-
+    - Another problem with the sequential ordering is that it works quickly for only one key. Our file is arranged by last names. But suppose you wanted to search for a particular phone number. You can't use a binary search because the data is ordered by name. You would need to go through the entire file, block by block, using sequential access. This search would require reading an average of half the blocks, which would require about 2.5 minutes, very poor performance for a simple search. It would be nice to have a more efficient way to store disk data.
 
 ### B-Trees
+- used for external data than for in-memory data
+- a multiway tree somewhat like a 2-3-4 tree, but with many more data items per node
+
+- One Block Per Node
+    - It makes sense then to store an entire block of data in each node of the tree. This way, reading a node accesses a maximum amount of data in the shortest time.
+    - When we simply stored the 512-byte data records for our phone book example, we could fit 16 into an 8,192-byte block.
+    - In a tree, however, we also need to store the links to other nodes
+    - For a tree stored in a disk file, the links are block numbers in a file (from 0 to 31,249, in our phone book example)
+    - For block numbers we can use a field of type int, a 4-byte type, which can point to more than 2 billion possible blocks, which is probably enough for most files.
+    - Now we can no longer squeeze 16 512-byte records into a block because we need room for the links to child nodes. We could reduce the number of records to 15 to make room for the links, but it's most efficient to have an even number of records per node, so (after appropriate negotiation with management) we reduce the record size to 507 bytes. There will be 17 child links (one more than the number of data items) so the links will require 68 bytes (17 * 4). This leaves room for 16 507-byte records with 12 bytes left over (507 * 16 + 68 = 8,180). A block in such a tree, and the corresponding node representation
+    - A node in a B-tree of order 17.
+    <img src="./images/2M-234-Tree.jpg"></img>
+    - Within each node the data is ordered sequentially by key, as in a 2-3-4 tree. In fact, the structure of a B-tree is similar to that of a 2-3-4 tree, except that there are more data items per node and more links to children. The order of a B-tree is the number of children each node can potentially have. In our example this is 17, so the tree is an order 17 """"B-tree"""" !!!!!
+
+- Searching
+    - A search for a record with a specified key is carried out in much the same way it is in an in-memory 2-3-4 tree. First, the block containing the root is read into memory. The search algorithm then starts examining each of the 15 records (or, if it's not full, as many as the node actually holds), starting at 0. When it finds a record with a greater key, it knows to go to the child whose link lies between this record and the preceding one.
+    - This process continues until the correct node is found. If a leaf is reached without finding the specified key, the search is unsuccessful.
+- Insertion
+    - The insertion process in a B-tree is more like an insertion in a 2-3 tree than in a 2-3-4 tree.
+    - in a 2-3-4 tree many nodes are not full, and in fact contain only one data item. In particular, a node split always produces two nodes with one item in each. This is not an optimum approach in a B-tree.
+    - In a B-tree it's important to keep the nodes as full as possible so that each disk access, which reads an entire node, can acquire the maximum amount of data. To help achieve this end, the insertion process differs from that of 2-3-4 trees in three ways:
+        - A node split divides the data items equally: Half go to the newly created node, and half remain in the old one.
+        - Node splits are performed from the bottom up, as in a 2-3 tree, rather than from the top down.
+        - Again, as in a 2-3 tree, it's not the middle item in a node that's promoted upward, but the middle item in the sequence formed from the items in the node plus the new item.
+        - Example of order 5 B-tree
+            <img src="./images/2L-234-Tree.jpg"></img>
+        - shows a root node that's already full; items with keys 20, 40, 60, and 80 have already been inserted into the tree. A new data item with a key of 70 is inserted, resulting in a node split. Here's how the split is accomplished. Because it's the root that's being split, two new nodes are created (as in a 2-3-4 tree): a new root and a new node to the right of the one being split.
+        - To decide where the data items go, the insertion algorithm arranges their five keys in order, in an internal buffer. Four of these keys are from the node being split, and the fifth is from the new item being inserted. In Figure 10.25, these five-item sequences are shown to the side of the tree. In this first step the sequence 20, 40, 60, 70, 80 is shown.
+        - The center item in this sequence, 60 in this first step, is promoted to the new root node. (In the figure, an arrow indicates that the center item will go upward.) All the items to the left of center remain in the node being split, and all the items to the right go into the new right-hand node
+        - these five-item sequences are shown to the side of the tree. In this first step the sequence 20, 40, 60, 70, 80 is shown.
+        - The center item in this sequence, 60 in this first step, is promoted to the new root node. (In the figure, an arrow indicates that the center item will go upward.) All the items to the left of center remain in the node being split, and all the items to the right go into the new right-hand node. The result is shown in Figure b
+        - In Figure b we insert two more items, 10 and 30. They fill up the left child, as shown in Figure c. The next item to be inserted, 15, splits this left child, with the result shown in Figure d. Here the 20 has been promoted upward into the root
+        - Next, three items - 75, 85, and 90 - are inserted into the tree. The first two fill up the third child, and the third splits it, causing the creation of a new node and the promotion of the middle item, 80, to the root. The result is shown in Figure e.
+        - Again three items - 25, 35, and 50 - are added to the tree. The first two items fill up the second child, and the third one splits it, causing the creation of a new node and the promotion of the middle item, 35, to the root, as shown in Figure f.
+        - Now the root is full. However, subsequent insertions don't necessarily cause a node split, because nodes are split only when a new item is inserted into a full node, not when a full node is encountered in the search down the tree. Thus, 22 and 27 are inserted in the second child without causing any splits, as shown in Figure g.
+        - However, the next item to be inserted, 32, does cause a split; in fact it causes two of them. The second node child is full, so it's split, as shown in Figure h. However, the 27, promoted from this split, has no place to go because the root is full. Therefore, the root must be split as well, resulting in the arrangement of Figure i.
+        - Notice that throughout the insertion process no node (except the root) is ever less than half full, and many are more than half full. As we noted, this promotes efficiency because a file access that reads a node always acquires a substantial amount of data.
+
+- Efficiency of B-Trees
+    - Because there are so many records per node, and so many nodes per level, operations on B-trees are very fast, considering that the data is stored on disk
+    - In our phone book example there are 500,000 records.
+    - All the nodes in the B-tree are at least half full, so they contain at least 8 records and 9 links to children.
+    - The height of the tree is thus somewhat less than logbase9of(N) (logarithm to the base 9 of N), where N is 500,000. This is 5.972, so there will be about 6 levels in the tree.
+    - Thus, using a B-tree, only six disk accesses are necessary to find any record in a file of 500,000 records. At 10 milliseconds per access, this takes about 60 milliseconds, or 6/100 of a second
+    - The more records there are in a node, the fewer levels there are in the tree. We've seen that there are 6 levels in our B-tree, even though the nodes hold only 16 records. In contrast, a binary tree with 500,000 items would have about 19 levels, and a 2-3-4 tree would have 10. If we use blocks with hundreds of records, we can reduce the number of levels in the tree and further improve access times.
+    - Although searching is faster in B-trees than in sequentially ordered disk files, it's for insertion and deletion that B-trees show the greatest advantage.
+    - 
+    - Let's first consider a B-tree insertion in which no nodes need to be split. This is the most likely scenario, because of the large number of records per node. In our phone book example, as we've seen, only 6 accesses are required to find the insertion point. Then one more access is required to write the block containing the newly inserted record back to the disk, for a total of 7 accesses.
+    - 
+    - Next let's see how things look if a node must be split. The node being split must be read, have half its records removed, and be written back to disk. The newly created node must be written to the disk, and the parent must be read and, following the insertion of the promoted record, written back to disk. This is 5 accesses in addition to the 6 necessary to find the insertion point, for a total of 12. This is a major improvement over the 500,000 accesses required for insertion in a sequential file.
+    - 
+    - In some versions of the B-tree, only leaf nodes contain records. Non-leaf nodes contain only keys and block numbers. This may result in faster operation because each block can hold many more block numbers. The resulting higher-order tree will have fewer levels, and access speed will be increased. However, programming may be complicated because there are two kinds of nodes: leaves and non-leaves.
+    - 
+- Indexing
+    - A different approach to speeding up file access is to store records in sequential order but use a file index along with the data itself.
+    - A file index is a list of key/block pairs, arranged with the keys in order.
+    - Recall that in our original phone book example we had 500,000 records of 512 bytes each, stored 16 records to a block, in 31,250 blocks.
+    - Assuming our search key is the last name, every entry in the index contains two items:
+        - The key, like Jones.
+        - The number of the block where the Jones record is located within the file. These numbers run from 0 to 31,249.
+        - Let's say we use a string 28 bytes long for the key (big enough for most last names) and 4 bytes for the block number (a type int in Java). Each entry in our index thus requires 32 bytes. This is only 1/16 the amount necessary for each record.
+        - The entries in the index are arranged sequentially by last name.
+        - The original records on the disk can be arranged in any convenient order.
+        - This usually means that new records are simply appended to the end of the file, so the records are ordered by time of insertion.
+        - <img src="./images/2N-234-Tree.jpg"></img>
+        - The index is much smaller than the file containing actual records. It may even be small enough to fit entirely in main memory. In our example there are 500,000 records. Each one has a 32-byte entry in the index, so the index will be 32 * 500,000, or 1,600,000 bytes long (1.6 megabytes). In modern computers there's no problem fitting this in memory. The index can be stored on the disk but read into memory whenever the database program is started up. From then on, operations on the index can take place in memory. At the end of each day (or perhaps more frequently), the index can be written back to disk for permanent storage.
+    - 
+- Searching
+    - The index-in-memory approach allows much faster operations on the phone book file than are possible with a file in which the records themselves are arranged sequentially. For example, a binary search requires 19 index accesses. At 20 microseconds per access, that's only about 4/10,000 of a second. Then there's (inevitably) the time to read the actual record from the file, once its block number has been found in the index. However, this is only one disk access of (say) 10 milliseconds.
+- Insertion
+    - To insert a new item in an indexed file, two steps are necessary. We first insert the item’s full record into the main file; then we insert an entry, consisting of the key and the block number where the new record is stored, into the index.
+    - Because the index is in sequential order, to insert a new item, we need to move half the index entries, on the average. Figuring 2 microseconds to move a byte in memory, we have 250,000 times 32 times 2, or about 16 seconds to insert a new entry. This compares with 5 minutes for the unindexed sequential file. (Note that we don't need to move any records in the main file; we simply append the new record at the end of the file.)
+    - Of course, you can use a more sophisticated approach to storing the index in memory. You could store it as a binary tree, 2-3-4 tree, or red-black tree, for example. Any of these would significantly reduce insertion and deletion times. In any case the index-in-memory approach is much faster than the sequential-file approach. In some cases it will also be faster than a B-tree.
+    - The only actual disk accesses necessary for an insertion into an indexed file involve the new record itself. Usually, the last block in the file is read into memory, the new record is appended, and the block is written back out. This process involves only two file accesses.
+- Multiple Indexes
+    - An advantage of the indexed approach is that multiple indexes, each with a different key, can be created for the same file. In one index the keys can be last names; in another, telephone numbers; in another, addresses. Because the indexes are small compared with the file, this doesn’t increase the total data storage very much. Of course, it does present more of a challenge when items are deleted from the file because entries must be deleted from all the indexes
+
+- Index Too Large for Memory
+    - If the index is too large to fit in memory, it must be broken into blocks and stored on the disk. For large files storing the index itself as a B-tree may then be profitable. In the main file the records are stored in any convenient order.
+    - This arrangement can be very efficient. Appending records to the end of the main file is a fast operation, and inserting the index entry for the new record is also quick because the index is a tree. The result is very fast searching and insertion for large files.
+    - Note that when an index is arranged as a B-tree, each node contains n child pointers and n-1 data items. The child pointers are the block numbers of other nodes in the index. The data items consist of a key value and a pointer to a block in the main file. Don't confuse these two kinds of block pointers.
+- Complex Search Criteria
+    - In complex searches the only practical approach may be to read every block in a file sequentially. Suppose in our phone book example we wanted a list of all entries in the phone book with first name Frank, who lived in Springfield, and who had a phone number with three 7 digits in it. (These were perhaps clues found scrawled on a scrap of paper clutched in the hand of a victim of foul play.)
+    - A file organized by last names would be no help at all. Even if there were index files ordered by first names and cities, there would be no convenient way to find which files contained both Frank and Springfield
+    - In such cases (which are quite common in many kinds of databases), the fastest approach is probably to read the file sequentially, block by block, checking each record to see whether it meets the criteria !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    - 
+- Sorting External Files
+    - Mergesort is the preferred algorithm for sorting external data. This is because, more so than most sorting techniques, disk accesses tend to occur in adjacent records rather than random parts of the file.
+    - From "Recursion" we know that mergesort works recursively by calling itself to sort smaller and smaller sequences
+    - Once two of the smallest sequences (one byte each in the internal-memory version) have been sorted, they are then merged into a sorted sequence twice as long. Larger and larger sequences are merged, until eventually the entire file is sorted.
+    - The approach for external storage is similar. However, the smallest sequence that can be read from the disk is a block of records. Thus, a two-stage process is necessary.
+        - In the first phase, a block is read, its "records are sorted internally", and the resulting sorted block is written back to disk. The next block is similarly sorted and written back to disk. This process continues until all the blocks are internally sorted.
+        - In the second phase, two sorted blocks are read, merged into a two-block sequence, and written back to disk. This process continues until all pairs of blocks have been merged. Next, each pair of two-block sequences is merged into a four-block sequence. Each time, the size of the sorted sequences doubles, until the entire file is sorted.
+
+    - <img src="./images/2O-234-Tree.jpg"></img>
+
+    - Internal Sort of Blocks
+        - In the first phase all the blocks in the file are sorted internally. This is done by reading the block into memory and sorting it with any appropriate internal sorting algorithm, such as quicksort (or for smaller numbers of records Shellsort or insertion sort).
+        - A second file may be used to hold the sorted blocks, and we assume that availability of external storage is not a problem. It's often desirable to avoid modifying the original file.
+    - Merging
+        - In the second phase we want to merge the sorted blocks. In the first pass we merge every pair of blocks into a sorted two-block sequence. Thus, the two blocks 2-9-11-14 and 4-12-13-16 are merged into 2-4-9-11-12-13-14-16. Also, 3-5-10-15 and 1-6-7-8 are merged into 1-3-5-6-7-8-10-15.
+        - In the second pass, the two 8-record sequences are merged into a 16-record sequence, which can be written back to File 2
+        - Now the sort is complete. Of course, more merge steps would be required to sort larger files; the number of such steps is proportional to log2N. The merge steps can alternate between two files (File 2 and File 3)
+    - Internal Arrays
+        - Because the computer's internal memory has room for only three blocks, the merging process must take place in stages. Let's say there are three arrays, called arr1, arr2, and arr3, each of which can hold a block.
+        - In the first merge, block 2-9-11-14 is read into arr1, and 4-12-13-16 is read into arr2. These two arrays are then mergesorted into arr3. However, because arr3 holds only one block, it becomes full before the sort is completed. When it becomes full, its contents are written to disk. The sort then continues, filling up arr3 again. This completes the sort, and arr3 is again written to disk
+        - <img src="./images/2O-234-Tree.jpg"></img>
+        ```
+        Mergesort 1:
+
+        1. Read 2-9-11-14 into arr1.
+
+        2. Read 4-12-13-16 into arr2.
+
+        3. Merge 2, 4, 9, 11 into arr3; write to disk.
+
+        4. Merge 12, 13, 14, 16 into arr3; write to disk.
+
+        Mergesort 2:
+
+        1. Read 3-5-10-15 into arr1.
+
+        2. Read 1-6-7-8 into arr2.
+
+        3. Merge 1, 3, 5, 6 into arr3; write to disk.
+
+        4. Merge 7, 8, 10, 15 into arr3, write to disk.
+
+        Mergesort 3:
+
+        1. Read 2-4-9-11 into arr1.
+
+        2. Read 1-3-5-6 into arr2.
+
+        3. Merge 1, 2, 3, 4 into arr3; write to disk.
+
+        4. Merge 5, 6 into arr3 (arr2 is now empty).
+
+        5. Read 7-8-10-15 into arr2.
+
+        6. Merge 7, 8 into arr3; write to disk.
+
+        7. Merge 9, 10, 11 into arr3 (arr1 is now empty).
+
+        8. Read 12-13-14-16 into arr1.
+
+        9. Merge 12 into arr3; write to disk.
+
+        10. Merge 13, 14, 15, 16 into arr3; write to disk.
+        ```
 
 
 
