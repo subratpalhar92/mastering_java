@@ -2172,6 +2172,402 @@ If P is red, there are two possibilities:
         10. Merge 13, 14, 15, 16 into arr3; write to disk.
         ```
 
+## Hash Table
+- A hash table is a data structure that offers very fast insertion and searching.
+- No matter how many data items there are, insertion and searching (and sometimes deletion) can take close to constant time: O(1) in big O notation. In practice this is just a few machine instructions.
+- programs typically use hash tables when they need to look up tens of thousands of items in less than a second (as in spelling checkers). Hash tables are significantly faster than trees
+- Hash tables do have several disadvantages. They're based on arrays, and arrays are difficult to expand after they've been created. For some kinds of hash tables, performance may degrade catastrophically when a table becomes too full, so the programmer needs to have a fairly accurate idea of how many data items will need to be stored (or be prepared to periodically transfer data to a larger hash table, a time-consuming process).
+- Also, there's no convenient way to visit the items in a hash table in any kind of order (such as from smallest to largest).
+- However, if you don't need to visit items in order, and you can predict in advance the size of your database, hash tables are unparalleled in speed and convenience.
+- 
+### Introduction to Hashing
+- One important concept is how a range of key values is transformed into a range of array index values
+- In a hash table this is accomplished with a hash function
+- However, for certain kinds of keys, no hash function is necessary; the key can be used directly as array indices
+- Index Numbers As Keys
+    - for example [emplyee id --> employee record]
+    - 
+- A Dictionary
+    - The [emplyee id --> employee record] is a classic example of a dictionary
+    - widely used application for hash tables is in computer-language compilers, which maintain a symbol table in a hash table. The symbol table holds all the variable and function names made up by the programmer, along with the address where they can be found in memory. The program needs to access these names very quickly, so a hash table is the preferred data structure.
+- Converting Words to Numbers
+    - ASCII code [0 to 255]
+    - Let's say
+    - a is 1, b is 2, c is 3, and so on up to 26 for z (Uppercase letters aren't used in this dictionary) & a blank is 0
+    - How do we combine the digits from individual letters into a number that represents an entire word
+    - Adding the Digits
+        - For cats c = 3, a = 1, t = 20, s = 19
+        - Then we add them: 3 + 1 + 20 + 19 = 43
+        - Thus, in our dictionary the word cats would be stored in the array cell with index 43
+        - The last potential word in the dictionary would be zzzzzzzzzz (10 Zs) [if 10 is max leter allowed]
+        - 26 + 26 + 26 + 26 + 26 + 26 + 26 + 26 + 26 + 26 = 260
+        - If there are 50,000 words in the dictionary, so there aren't enough index numbers to go around. Each array element will need to hold about 192 words
+        - Maybe we could put a subarray or linked list of words at each array element. Unfortunately, such an approach would seriously degrade the access speed. Accessing the array element would be quick, but searching through the 192 words to find the one we wanted would be slow.
+        - 
+    - Multiplying by Powers
+        - Imagine if we have a "number system" where ""we have 27-base"" instead of base 10 or octal base or binary base.
+        - 10 base numbers are represented as power of 10 - 887 -> 800(10^2) + 80 + 7  
+        - 27 base numbers will be represented as power of 27
+        - The 27 base will significantly increase the size of the array
+        - If we have a 10 letter word then it will have 26*27^9+26*27^8+26*27^7.....=7,000,000,000,000
+        - So there will be a uniqe place for evry single word + non word (bcz base is 27 NOT 10)
+        - But we don't need that much bcz our word numbers are 50k
+        - We need a squzeed range of about 0 to 100,000
+        - A simple approach is to use the modulo operator (%), which finds the remainder when one number is divided by another
+        - The remainders when any number is divided by 100,000 are always in the range 0 to 100,000
+        - <img src="./images/2Q-234-Tree.jpg"></img>
+        - This is an example of a hash function. It hashes (converts) a number in a large range into a number in a smaller range. This smaller range corresponds to the index numbers in an array.
+        - An array into which data is inserted using a hash function is called a hash table.
+        - In the huge range, each number represents a potential data item (an arrangement of letters), but few of these numbers represent actual data items (English words).
+        - A hash function transforms these large numbers into the index numbers of a much smaller array. In this array """"we expect that"""", on the average, there will be one word for every two cells. Some cells will have no words; and others, more than one.
+        - A practical implementation of this scheme runs into trouble because hugeNumber will probably overflow its variable size, even for type long.
+        - 
+    - Collisions
+        - We pay a price for squeezing a large range into a small one. There's no longer a guarantee that two words won't hash to the same array index. (we are squzeeing base 27)
+        - The best we can do is hope that not too many words will hash to the same index
+        - It may appear that the possibility of collisions renders the hashing scheme impractical, but in fact we can work around the problem in a variety of ways
+        - 
+        - 
+        - Remember that we've specified an array with twice as many cells as data items
+        - Thus, perhaps half the cells are empty
+        - One approach, when a collision occurs, is to search the array in some systematic way for an empty cell and insert the new item there, instead of at the index specified by the hash function. This approach is called """open-addressing"""
+        - If cats hashes to 5,421, but this location is already occupied by parsnip, then we might try to insert cats in 5,422, for example
+        - 
+        - 
+        - A second approach is to create an ""array that consists of linked lists"" of words instead of the words themselves
+        - Then, when a collision occurs, the new item is simply inserted in the ""list"" at that index
+        - This is called """separate chaining"""
+        - 
+        - 
+#### Open Addressing
+- Three methods of open addressing, which vary in the method used to find the next vacant cell
+- These methods are
+    - 1. linear probing
+    - 2. quadratic probing
+    - 3. double hashing
+    - 
+
+
+    - 1. linear probing
+        - In linear probing we search sequentially for vacant cells
+        - If 5,421 is the hash key/index & is occupied when we try to insert a data item there,
+        - we go to 5,422, then 5,423, and so on, incrementing the index until we find an empty cell
+        - & In the majority of cases you probably want to forbid duplicates.
+        - 
+        - The delete operation finds the array first
+        - When the item is found, delete() writes over it with the special data item nonItem, which is predefined with a [[[key]]] of -1.
+        - 
+        - 
+        - Expanding the Array
+        - Note that You can't therefore simply copy the items from one array to the other. You'll need to go through the old array in sequence, cell by cell, inserting each item you find into the new array with the insert() method. This is called rehashing. It's a time-consuming process, but necessary if the array is to be expanded.
+        - The expanded array is usually made twice the size of the original array. Actually, because the array size should be a prime number, the new array will need to be a bit more than twice as big.
+        - Actually, because the array size should be a prime number, the new array will need to be a bit more than twice as big. Calculating the new array size is part of the rehashing process.
+        - Here are some routines to help find the new array size (or the original array size, if you don't trust the user to pick a prime number, which is usually the case). You start off with the specified size and then look for the next prime larger than that. The getPrime() method gets the next prime larger than its argument. It calls isPrime() to check each of the numbers above the specified size.
+        ```
+        private int getPrime(int min) {
+            for(int j = min+1; true; j++) {
+                if( isPrime(j) );
+                return j;
+            }
+        }
+        private boolean isPrime(int n) {
+            for(int j=2; (j*j <= n); j++)    // for all j
+                if( n % j == 0)
+            return false;
+            return true;
+        }
+        /** 2, 3 , 5, 7 */
+        ```
+        - These routines are not the ultimate in sophistication. For example, in getPrime() you could check 2 and then odd numbers from then on, instead of every number. However, such refinements don't matter much because you usually find a prime after checking only a few numbers.
+        - 
+        - 
+        - Java offers a class Vector that is an array-like data structure that can be expanded. However, it's not much help because of the need to rehash all data items when the table changes size.
+        - 
+        - 
+    - 2. Quadratic Probing
+        - In linear probing the bigger cluster size is a problem
+        - What if we still apply the same strategy but instead of progressing linearly we will progress in Quadratic
+        - x+12, x+22, x+32, x+42, x+52, and so on.
+        - Quadratic probes eliminate the clustering problem
+        - quadratic probes suffer from a different and more subtle clustering problem. This occurs because all the keys that hash to a particular cell follow the same sequence in trying to find a vacant space.
+        - Let's say 184, 302, 420, and 544 all hash to 7 and are inserted in this order. Then 302 will require a one-step probe, 420 will require a four-step probe, and 544 will require a nine-step probe. Each additional item with a key that hashes to 7 will require a longer probe. This phenomenon is called secondary clustering.
+        - 
+        - Secondary clustering is not a serious problem, but quadratic probing is not often used because there's a slightly better solution.
+        - 
+        - 
+    - 3. double hashing
+        - The the quadratic probe always generates the same steps: 1, 4, 9, 16, and so on
+        - we need a way to generate probe sequences that depend on the key instead of being the same for every key
+        - Then numbers with different keys that hash to the same index will use different probe sequences
+        - The solution is to hash the key a second time, using a different hash function, and use the result as the step size. For a given key the step size remains constant throughout a probe, but it's different for different keys.
+        - this secondary hash function must have certain characteristics:
+            - It must not be the same as the primary hash function.
+            - It must never output a 0 (otherwise, there would be no step; every probe would land on the same cell, and the algorithm would go into an endless loop).
+        - stepSize = 5 - (key % 5); /** step sizes are all in the range 1 to 5. This */
+        - Having a PRIMARY DOES HELPS - AS PRIME HAVE Exactly two divisor
+        - For example, suppose the array size is 15
+        - that a particular key hashes to an initial index of 0 and a step size of 5. The probe sequence will be 0, 5, 10, 0, 5, 10, and so on, repeating endlessly.
+        - 
+        - SO WHEN IT WILL BE ROUNDED OFF :: The algorithm will generate a separate steps
+        - 
+        - Try finding existing keys. When one needs a probe sequence, you'll see how all the steps are the same size for a given key, but that the step size is different-between 1 and 5-for different keys.
+        - 
+        - 
+#### Separate Chaining
+- A different approach is to install a linked list at each index in the hash table. A data item’s key is hashed to the index in the usual way, and the item is inserted into the linked list at that index. Other items that hash to the same index are simply added to the linked list; there’s no need to search for empty cells in the primary array
+- Load Factors
+    - In separate chaining it's normal to put N or more items into an N cell array; thus, the load factor can be 1 or greater.
+    - Finding the initial cell takes fast O(1) time, but searching through a list takes time proportional to M, the average number of items on the list. This is O(M) time. Thus, we don't want the lists to become too full.
+    - In open addressing, performance degrades badly as the load factor increases above one-half or two-thirds
+    - 
+- Duplicates
+    - Duplicates are allowed and may be generated in the Fill process
+    - 
+- deletion
+    - In separate chaining, deletion poses no special problems as it does in open addressing. The algorithm hashes to the proper list and then deletes the item from the list.
+    - 
+- Table Size
+    - With separate chaining, making the table size a prime number is not as important as it is with quadratic probes and double hashing
+    - 
+    - 
+- Buckets
+    - Another approach similar to separate chaining is to use an array at each location in the hash table, instead of a linked list. Such arrays are sometimes called buckets. This approach is not as efficient as the linked list approach, however, because of the problem of choosing the size of the buckets. If they're too small, they may overflow, and if they're too large, they waste memory
+    - 
+    - 
+### Hash Functions
+- we'll explore the issue of what makes a good hash function
+- 
+- A good hash function is simple, so it can be computed quickly
+- A hash function with many multiplications and divisions is not a good idea
+- 
+- The purpose of a hash function is to take a range of key values and transform them into index values in such a way that the key values are distributed randomly across all the indices of the hash table
+- 
+- Keys may be completely random or not so random
+- 
+- A so-called perfect hash function maps every key into a different table location
+- This is only possible for keys that are unusually well behaved and whose range is small enough to be used directly as array indices
+- 
+- Non-Random Keys
+    - Data is often distributed non-randomly
+    - Imagine a database that uses 'car-part-numbers' as keys
+    - 033-400-03-94-05-0-535
+        - Digits 0-2: Supplier number (1 to 999, currently up to 70)
+        - Digits 3-5: Category code (100, 150, 200, 250, up to 850)
+        - Digits 6-7: Month of introduction (1 to 12)
+        - Digits 8-9: Year of introduction (00 to 99)
+        - Digits 10-11: Serial number (1 to 99, but never exceeds 100)
+        - Digit 12: Toxic risk flag (0 or 1)
+        - Digits 13-15: """Checksum""" [[[ """ sum of other fields, modulo 100 """ ]]]
+        - 
+        - The above key are not randomly distributed
+        - The majority of numbers from 0 to 9,999,999,999,999,999 can't actually occur
+        - Since
+        - Month can't contain 13-99
+        - The checksum is not independent of the other numbers
+        - 
+        - So Rule is 
+        - Don't Use Non-Data
+            - The key fields should be squeezed down until every bit counts
+            - the checksum should be removed because it doesn't add any additional information
+            - 
+        - Use All the Data
+            - Every part of the key (except non-data, as just described) should contribute to the hash function
+            - Don't just use the first four digits or some such expurgation. The more data that contributes to the key, the more likely it is that the keys will hash evenly into the entire range of indices
+            - 
+        - Use a Prime Number for the Modulo Base
+            - if the keys themselves may not be randomly distributed, it's then become very important for the table size to be a prime number no matter what hashing system is used.
+            - 
+- Hashing Strings
+    - For "CAT" we used the formule : key = 3*273 + 1*272 + 20*271 + 19*270
+    ```
+    public static int hashFunc1(String key) {
+        int hashVal = 0;
+        int pow27 = 1;                       // 1, 27, 27*27, etc
+        
+        for(int j=key.length()-1; j>=0; j--) { // right to left
+            int letter = key.charAt(j) - 96;  // get char code
+            hashVal += pow27 * letter;        // times power of 27
+            pow27 *= 27;                      // next power of 27
+        }
+        return hashVal % arraySize;
+    }
+    ```
+    - char4 * n4    +   char3 * n3      +   char2 * n2  +   char1 * n1      +   char0 * n0
+    - can be written as
+    - (((char4*n + char3)*n + char2)*n + char1)*n + char0 /** Horner's method */
+    ```
+    public static int hashFunc2(String key) {
+        int hashVal = key.charAt(0) - 96;
+        for(int j=1; j<key.length(); j++) {    // left to right
+            int letter = key.charAt(j) - 96;  // get char code
+            hashVal = hashVal * 27 + letter;  // multiply and add
+        }
+        return hashVal % arraySize;          // mod
+    }
+    ```
+    - The above hash method unfortunately can't handle strings longer than about seven letters
+    - Longer strings cause the value of hashVal to exceed the size of type int
+    - (Even if we used type long, the same problem would still arise for somewhat longer strings)
+    - Notice that the key we eventually end up with is always less than the array size because we apply the modulo operator.
+    - It's not the final index that's too big; it's the intermediate key values.
+    - It turns out that with Horner’s formulation we can apply the modulo operator (%) at each step in the calculation. This gives the same result as applying the modulo operator once at the end but avoids overflow
+    - So the modified version is
+    ```
+    public static int hashFunc3(String key) {
+        int hashVal = 0;
+        for(int j=0; j<key.length(); j++) {    // left to right
+            int letter = key.charAt(j) - 96;  // get char code
+            hashVal = (hashVal * 27 + letter) % arraySize; // mod
+        }
+        return hashVal;                      // no mod
+    }
+    ```
+    - Various bit-manipulation tricks can be played as well
+    - such as using a base of 32 (or a larger power of 2) instead of 27,
+    - so that multiplication can be effected using the shift operator (>>), which is faster than the modulo operator (%)
+    - 
+- Folding
+    - Another reasonable hash function involves
+    - breaking the key into groups of digits and adding the groups
+    - This ensures that all the digits influence the hash value
+    - 
+    - For example, suppose you want to hash nine-digit Social Security numbers for linear probing. If the array size is 1,000, you would divide the nine-digit number into three groups of three digits. If a particular SSN was 123-45-6789, you would calculate a key value of 123+456+789 = 1368. You can use the % operator to trim such sums so the highest index is 999. In this case, 1368%1000 = 368. If the array size is 100, you would need to break the nine-digit key into four two-digit numbers and one one-digit number: 12+34+56+78+9 = 189, and 189%100 = 89
+    - 
+    - It's easier to imagine how this works when the array size is a multiple of 10. However, for best results it should be a prime number, as we’ve seen for other hash functions.
+    - 
+### Hashing Efficiency
+- We've noted that insertion and searching in hash tables can approach O(1) time. If no collision occurs, only a call to the hash function and a single array reference are necessary to insert a new item or find an existing item. This is the minimum access time.
+- 
+- An individual search or insertion time is proportional to the length of the probe. This is in addition to a constant time for the hash function.
+- 
+- The average probe length (and therefore the average access time) is dependent on the load factor (the ratio of items in the table to the size of the table). As the load factor increases, probe lengths grow longer
+- 
+- We'll look at the relationship between probe lengths and load factors for the various kinds of hash tables we've studied.
+- 
+- 
+- In Open Addressing
+    - The loss of efficiency with high load factors is more serious for the various open addressing schemes than for separate chaining.
+    - In open addressing, unsuccessful searches generally take longer than successful searches. During a probe sequence, the algorithm can stop as soon as it finds the desired item, which is, on the average, halfway through the probe sequence
+    - In Linear Probing
+        - The following equations show the relationship between probe length (P) and load factor (L) for linear probing. For a successful search it's
+        - P = ( 1 + 1 / (1 - L)^2 ) / 2
+        - and for an unsuccessful search it's
+        - P = ( 1 + 1 / (1 - L) ) / 2
+        - These formulas are from Knuth and their derivation is quite complicated
+        - <img src="./images/2R-RB-TREE.jpg"></img>
+        - At a load factor of 1/2, a successful search takes 1.5 comparisons and an unsuccessful search takes 2.5. At a load factor of 2/3, the numbers are 2.0 and 5.0. At higher load factors the numbers become very large.
+        - The moral, as you can see, is that the load factor must be kept under 2/3 and preferably under 1/2. On the other hand, the lower the load factor, the more memory is needed for a given amount of data. The optimum load factor in a particular situation depends on the trade-off between memory efficiency, which decreases with lower load factors, and speed, which increases.
+        - 
+    - In Quadratic Probing and Double Hashing
+        - Quadratic probing and double hashing share their performance equations. These equations indicate a modest superiority over linear probing. For a successful search, the formula (again from Knuth) is
+        - log-base(2)of(1-loadFactor) / loadFactor
+        - For an unsuccessful search it is
+        - 1 / (1-loadFactor)
+        - 
+        - <img src="./images/2S-RB-TREE.jpg"></img>
+        - 
+        - hows graphs of these formulas. At a load factor of 0.5, successful and unsuccessful searches both require an average of two probes. At a 2/3 load factor, the numbers are 2.37 and 3.0, and at 0.8 they're 2.90 and 5.0. Thus, somewhat higher load factors can be tolerated for quadratic probing and double hashing than for linear probing.
+        - 
+        - 
+- In Separate Chaining
+    - We'll assume that the most time-consuming part of these operations is comparing the search key of the item with the keys of other items in the list
+    - We'll also assume that the time required to hash to the appropriate list and to determine when the end of a list has been reached is equivalent to one key comparison. Thus, all operations require 1+nComps time, where nComps is the number of key comparisons.
+    - Let's say that the hash table consists of arraySize elements, each of which holds a list, and that N data items have been inserted in the table. Then, on the average, each list will hold N divided by arraySize items:
+    - 
+    - AverageListLength = N / arraySize
+    - 
+    - This is the same as the definition of the load factor:
+    - 
+    - loadFactor = N / arraySize
+    - 
+    - so the average list length equals the load factor.
+    - 
+    - Searching
+    - In a successful search, the algorithm hashes to the appropriate list and then searches along the list for the item. On the average, half the items must be examined before the correct one is located. Thus, the search time is
+    - 
+    - 1 + loadFactor / 2
+    - 
+    - This is true whether the lists are ordered or not. In an unsuccessful search, if the lists are unordered, all the items must be searched, so the time is
+    - 1 + loadFactor
+    - 
+    - <img src="./images/2T-RB-TREE.jpg"></img>
+    - For an ordered list, only half the items must be examined in an unsuccessful search, so the time is the same as for a successful search.
+    - 
+    - In separate chaining it's typical to use a load factor of about 1.0 (the number of data items equals the array size). Smaller load factors don't improve performance significantly, but the time for all operations increases linearly with load factor, so going beyond 2 or so is generally a bad idea.
+    - 
+    - Insertion
+    - If the lists are not ordered, insertion is always immediate, in the sense that no comparisons are necessary. The hash function must still be computed, so let's call the insertion time 1.
+    - If the lists are ordered, then, as with an unsuccessful search, an average of half the items in each list must be examined, so the insertion time is
+    - 1 + loadFactor / 2
+    - 
+- Open Addressing Versus Separate Chaining
+    - If open addressing is to be used, double hashing seems to be the preferred system by a small margin over quadratic probing. The exception is the situation in which plenty of memory is available and the data won't expand after the table is created; in this case linear probing is somewhat simpler to implement and, if load factors below 0.5 are used, causes little performance penalty.
+    - If the number of items that will be inserted in a hash table isn't known when the table is created, separate chaining is preferable to open addressing. Increasing the load factor causes major performance penalties in open addressing, but performance degrades only linearly in separate chaining.
+    - When in doubt, use separate chaining. Its drawback is the need for a linked list class, but the payoff is that adding more data than you anticipated won't cause performance to slow to a crawl.
+    - 
+### Hashing and External Storage
+- We have allready discussed using B-trees as data structures for external (disk-based) storage
+- Let's look briefly at the use of hash tables for external storage.
+- 
+- a disk file is divided into blocks containing many records, and that the time to access a block is much larger than any internal processing on data in main memory. For these reasons the overriding consideration in devising an external storage strategy is minimizing the number of block accesses.
+- 
+- Table of File Pointers
+- The central feature in external hashing is a hash table containing block numbers, which refer to blocks in external storage. The hash table is sometimes called an index (in the sense of a book's index).
+- if it is too large, stored externally on disk, with only part of it being read into main memory at a time. Even if it fits entirely in main memory, a copy will probably be maintained on the disk and read into memory when the file is opened.
+- 
+- So Non-Full Blocks is a major concern
+- 
+- We saw earlier example in which the block size is 8,192 bytes, and a record is 512 bytes. Thus, a block can hold 16 records. Every entry in the hash table points to one of these blocks. Let's say there are 100 blocks in a particular file.
+- 
+- The index (hash table) in main memory holds pointers to the file blocks, which start at 0 at the beginning of the file and run up to 99.
+- In external hashing it's important that blocks don't become full. Thus, we might store an average of 8 records per block. Some blocks would have more records, and some fewer. There would be about 800 records in the file. 
+- 
+- Full Blocks
+- Even with a good hash function, a block will occasionally become full. This situation can be handled using variations of the collision-resolution schemes discussed for internal hash tables: open addressing and separate chaining. (so we can read a 2 block at a time)
+- 
+- In open addressing, if, during insertion, one block is found to be full, the algorithm inserts the new record in a neighboring block. In linear probing this is the next block, but it could also be selected using a quadratic probe or double hashing. In separate chaining, special overflow blocks are made available; when a primary block is found to be full, the new record is inserted in the overflow block. (MAY BE BY THE TIME THE BLOCK IS NOT CREATED !! CHECK IT AGAIN !!)
+- 
+- Full blocks are undesirable because an additional disk access is necessary for the second block; this doubles the access time. However, this is acceptable if it happens rarely.
+- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
