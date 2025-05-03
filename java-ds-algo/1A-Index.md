@@ -2529,18 +2529,322 @@ If P is red, there are two possibilities:
 - 
 - Full blocks are undesirable because an additional disk access is necessary for the second block; this doubles the access time. However, this is acceptable if it happens rarely.
 - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 
 
+## Heaps
+- Priority queues may be used for task scheduling in computers, where some programs and activities should be executed sooner than others and are therefore given a higher priority.
+- 
+- 
+- Another example is in weapons systems, say in a navy cruiser. Numerous threats-airplanes, missiles, submarines, and so on - are detected and must be prioritized. For example, a missile that's a short distance from the cruiser is assigned a higher priority than an aircraft a long distance away so that countermeasures (surface-to-air missiles, for example) can deal with it first.
+- A priority queue is an Abstract Data Type (ADT) offering methods that allow removal of the item with the maximum (or minimum) key value, insertion, and sometimes other operations.
+- 
+- 
+- 
+- A priority queue implemented as an ordered array. The trouble with that approach is that, even though removal of the largest item is accomplished in fast O(1) time, insertion requires slow O(N) time, because an average of half the items in the array must be moved to insert the new one in order.
+- 
+- Here we'll describe another structure that can be used to implement a priority queue: the ""heap""
+- 
+- HEAP = PQ + TREE
+- 
+- A heap is a kind of tree
+- It offers both insertion & deletion in O(logN) time
+- Thus, it's not quite as fast for deletion, but much faster for insertion
+- It's the method of choice for implementing """priority queues""" where speed is important & there will be many insertions
+- 
+- Introduction to Heaps
+    - A heap is a binary tree with these characteristics
+    - It's complete. This means it's completely filled in, reading from left to right across each row, although the last row need not be full.
+        - <img src="./images/2U-HEAP.jpg"></img>
+    - It's (usually) implemented as an array. We allready seen how binary trees can be stored in arrays, rather than using references to connect the nodes
+    - 
+    - Each node in a heap satisfies the heap condition, which states that every node's key is larger than (or equal to) the keys of its children.
+        - <img src="./images/2V-HEAP.jpg"></img>
+    - The tree is complete and that the heap condition is satisfied for all the nodes.
+    - The fact that a heap is a complete binary tree implies that there are no "holes" in the array used to represent it. Every cell is filled, from 0 to N-1
+    - 
+    - We'll assume in this chapter that the maximum key (rather than the minimum) is in the root. A priority queue based on such a heap is a descending-priority queue. (ascending-priority queues we already discussed)
+    - 
+    - There's a very close relationship between a priority queue and the heap used to implement it
+    ```
+    class Heap {
+        private Node heapArray[];
+        public void insert(Node nd) {  }
+        public Node remove() {  }
+    }
 
+    class priorityQueue {
+        private Heap theHeap;
+        
+        public void insert(Node nd){ theHeap.insert(nd); }
+        public Node remove(){
+            return theHeap.remove()
+        }
+    }
 
+    The methods for the priorityQueue class are simply wrapped around the methods for the underlying Heap class
+    ```
+    - 
+    - 
+- Weakly Ordered
+    - When a [[[node's]]] left descendants have keys "less" than all its right descendants !
+    - In a "binary search tree" you can traverse the nodes in order by following a simple algorithm
+    - In a heap, traversing the nodes in order is difficult because the organizing principle (the heap condition) is not as strong as the organizing principle in a tree
+    - All you can say about a heap is that, along every path from the root to a leaf, the nodes are arranged in descending order.
+    - As you can see in ABOVE Figure,
+        - the nodes to the left or right of a given node,
+        - or on higher or lower levels
+        - provided they're not on the same path -- can have keys larger or smaller than the node's key
+        - Except where they share the same nodes, paths are independent of each other.
 
+    - Because heaps are weakly ordered, some operations are difficult or impossible. Besides its failure to support traversal, a heap also does not allow convenient searching for a specified key.
+    - This is because there's not enough information to decide which of a node's two children to pick -- in trying to descend to a lower level during the search
+    - It follows that a node with a specified key can't be deleted, at least in O(logN) time, because there's no way to find it.
+    - Thus, the organization of a heap may seem dangerously close to randomness
+    - Nevertheless, the ordering is just sufficient to allow fast removal of the maximum node and fast insertion of new nodes
+    - These operations are all that's needed to use a heap as a priority queue
 
+- Removal
+    - Removal means removing the node with the maximum key. This node is always the root
+    - once the root is gone, the tree is no longer complete; there's an empty cell. This "hole" must be filled in
+    - We could shift all the elements in the array down one cell, but there's a much faster approach
+    - Here are the steps for removing the maximum node
+        - Move the last node into the root
+        - Trickle the last node down,, until it's below a larger node --&&-- above a smaller node
+    - The last node is the rightmost node in the lowest occupied level of the tree.
+    - This corresponds to the "last filled cell in the array"
+    - To copy this node into the root is straightforward
+    ```
+    heapArray[0] = heapArray[N-1];
+    N--;
+    ```
+    - To trickle/bubble/percolate a node up or down means to move it along a path step by step, swapping it with the node ahead of it, checking at each step to see whether it's in its proper position
+    - <img src="./images/2W-HEAP.jpg"></img>
+    - 
+- Insertion
+    - Insertion uses trickle up, rather than trickle down
+    - Initially, the node to be inserted is placed in the first open position at the end of the array, increasing the array size by one
+    ```
+    heapArray[N] = newNode;
+    N++;
+    ```
+    - The problem is that it's likely that this will destroy the heap condition. This happens if the new node's key is larger than its newly acquired parent. Because this parent is on the bottom of the heap, it's likely to be small, so the new node is likely to be larger. Thus, the new node will usually need to be trickled upward until it's below a node with a larger key and above a node with a smaller key
+    <img src="./images/2X-HEAP.jpg"></img>
+- Not Really Swapped
+    - REQUIRED: node A will end up in position D & nodes B, C & D will each move up one level
+    <img src="./images/2Y-HEAP.jpg"></img>
+    - A swap requires three copies, so the three swaps 9 coipies (figure a)
+    - We can reduce the total number of copies necessary in a trickle algorithm by substituting copies for swaps
+    - The (Figure b) shows how five copies do the work of three swaps. First, node A is saved temporarily. Then B is copied over A, C is copied over B, and D is copied over C. Finally, A is copied back from temporary storage onto position D. We have reduced the number of copies from nine to five
+    - 
+### Java Code for Heaps
+- An ARRAY representing a TREE
+    - For a node at index x in the array
+        - Its parent is (x-1) / 2
+        - Its left child is 2*x + 1
+        - Its right child is 2*x + 2
+    - Insertion
+        ```
+        public boolean insert(int key) {
+            if(currentSize==maxSize)            // if array is full,
+                return false;                    //    failure
+            Node newNode = new Node(key);       // make a new node
+            heapArray[currentSize] = newNode;   // put it at the end
+            trickleUp(currentSize++);           // trickle it up
+            return true;                        // success
+        }
+        We a node is inserted at the end of the array
+        Then trickleUp() routine is called to move this node up to its proper position
 
+        public void trickleUp(int index) {
+            int parent = (index-1) / 2;
+            Node bottom = heapArray[index];
 
+            while( index > 0 && heapArray[parent].getKey() < bottom.getKey() ) {
+                heapArray[index] = heapArray[parent]; // move node down
+                index = parent;                       // move index up
+                parent = (parent-1) / 2;        // parent <- its parent
+            }  // end while
+            heapArray[index] = bottom;
+        }
 
+        In trickleUp() (shown below) the argument is the index of the newly inserted item. We find the parent of this position and then save the node in a variable called bottom.
 
+        Inside the while loop, the variable index will trickle up the path toward the root, pointing to each node in turn. The while loop runs as long as we haven't reached the root (index>0), and the key (iData) of index's parent is less than the new node
 
+        The body of the while loop executes one step of the trickle-up process. It first copies the parent node into index, moving the node down. (This has the effect of moving the "hole" upward.) Then it moves index upward by giving it its parent's index, and giving its parent its parent's index.
+        ```
+    - Removal
+        The removal algorithm is also not complicated if we subsume the trickle-down algorithm into its own routine. We save the node from the root, copy the last node (at index currentSize-1) into the root, and call trickleDown() to place this node in its appropriate location.
+        ```
+        public Node remove() {                           // (assumes non-empty list)
+            Node root = heapArray[0];   // save the root
+            heapArray[0] = heapArray[--currentSize];  // root <- last
+            trickleDown(0);             // trickle down the root
+            return root;                // return removed node
+        }
 
+        The trickleDown() routine is more complicated than trickleUp() because we must determine which of the two children is larger. First, we save the node at index in a variable called top. If trickleDown() has been called from remove(), index is the root, but, as we'll see, it can be called from other routines as well.
+
+        The while loop will run as long as index is not on the bottom row-that is, as long as it has at least one child. Within the loop we check if there is a right child (there may be only a left), and if so, compare the children's keys, setting largerChild appropriately.
+
+        Then we check if the key of the original node (now in top) is greater than that of largerChild; if so, the trickle-down process is complete and we exit the loop.
+
+        public void trickleDown(int index) {
+            int largerChild;
+            Node top = heapArray[index];       // save root
+            while(index < currentSize/2) {      // while node has at least one child,
+                int leftChild = 2*index+1;
+                int rightChild = leftChild+1;
+
+                // find larger child
+                if(rightChild < currentSize && heapArray[leftChild].getKey() < heapArray[rightChild].getKey()) // rightChild exists
+                    largerChild = rightChild;
+                else
+                    largerChild = leftChild;
+
+                // top >= largerChild?
+                if(top.getKey() >= heapArray[largerChild].getKey())
+                    break;
+
+                // shift child up
+                heapArray[index] = heapArray[largerChild];
+                index = largerChild;            // go down
+            }
+            heapArray[index] = top;            // index <- root
+        }
+        ```
+    
+    - Key Change
+    After we've created the trickleDown() and trickleUp() methods, we can easily implement an algorithm to change the priority (the key) of a node and then trickle it up or down to its proper position. The change() method accomplishes this:
+        ```
+        public boolean change(int index, int newValue) {
+            if(index<0 || index>=currentSize)
+                return false;
+            int oldValue = heapArray[index].getKey(); // remember old
+            heapArray[index].setKey(newValue);  // change to new
+
+            if(oldValue < newValue)             // if raised,
+                trickleUp(index);                // trickle it up
+            else                                // if lowered,
+                trickleDown(index);              // trickle it down
+            return true;
+        }
+
+        This routine first checks that the index given in the first argument is valid, and if so, changes the iData field of the node at that index to the value specified as the second argument
+
+        Then, if the priority has been raised, the node is trickled up; if it's been lowered, it's trickled down
+
+        Actually, the difficult part of changing a node's priority is not shown in this routine: finding the node you want to change. In the change() method just shown, we supply the index as an argument, and in the Heap Workshop applet, the user simply clicks on the selected node. In a real-world application a mechanism would be needed to find the appropriate node; as we've seen, the only node to which we normally have convenient access in a heap is the one with the largest key.
+
+        The problem can be solved in linear O(N) time by searching the array sequentially. Or, a separate data structure (perhaps a hash table) could be updated with the new index value whenever a node was moved in the priority queue. This would allow quick access to any node. Of course, keeping a second structure updated would itself be time-consuming.
+        ```
+    - The Array Size
+        - We should note that the array size, equivalent to the number of nodes in the heap, is a vital piece of information about the heap's state and a critical field in the Heap class
+        - Nodes copied from the last position aren't erased, so the only way for algorithms to know the location of the last occupied cell is to refer to the current size of the array
+    - Expanding the Heap Array
+        - What happens if, while a program is running, too many items are inserted for the size of the heap array? A new array can be created, and the data from the old array copied into it.
+        - Unlike the situation with hash tables, changing the size of a heap doesn't require reordering the data.
+        - The copying operation takes linear time, but enlarging the array size shouldn't be necessary very often, especially if the array size is increased substantially each time it's expanded (by doubling it, for example).
+
+```
+In Java, a Vector class object could be used instead of an array; vectors can be expanded dynamically.
+```
+
+- Efficiency of Heap Operations
+    - For a heap with a substantial number of items, the trickle-up and trickle-down algorithms are the most time-consuming part of the operations we've seen. These algorithms spend time in a loop, repeatedly moving nodes up or down along a path. The number of copies necessary is bounded by the height of the heap; if there are five levels, four copies will carry the "hole" from the top to the bottom. (We'll ignore the two moves used to transfer the end node to and from temporary storage; they're always necessary, so they require constant time.)
+    - The trickleUp() method has only one major operation in its loop: comparing the key of the new node with the node at the current location. The trickleDown() method needs two comparisons: one to find the largest child and a second to compare this child with the "last" node. They must both copy a node from top to bottom or bottom to top to complete the operation.
+    - A heap is a special kind of binary tree, and as we saw earlier, the number of levels L in a binary tree equals log2(N+1), where N is the number of nodes. The trickleUp() and trickleDown() routines cycle through their loops L-1 times, so the first takes time proportional to log2N, and the second somewhat more because of the extra comparison. Thus, the heap operations we’ve talked about here all operate in O(logN) time.
+- 
+- 
+- 
+- 
+- 
+- 
+
+### A Tree-based Heap
+- we've just shown heaps as if they were trees because it's easier to visualize them that way, but the implementation has been based on an array. However, it's possible to use an actual tree-based implementation. The tree will be a binary tree, but it won't be a search tree because, as we've seen, the ordering principle is not that strong. It will also be a complete tree, with no missing nodes. Let's call such a tree a tree heap.
+- One problem with tree heaps is finding the last node. You need to find this node to remove the maximum item, because it's the last node that's inserted in place of the deleted root (and then trickled down). You also need to find the first empty node, because that's where you insert a new node (and then trickle it up). You can't search for these nodes because you don't know their values, and anyway it's not a search tree. However, these locations are not hard to find in a complete tree if you keep track of the number of nodes in the tree.
+- As we saw in the discussion of the Huffman tree, you can represent the path from root to leaf as a binary number, with the binary digits indicating the path from each parent to its child: 0 for left and 1 for right.
+- It turns out there's a simple relationship between the number of nodes in the tree and the binary number that codes the path to the last node. Assume the root is numbered 1; the next row has nodes 2 and 3; the third row has nodes 4, 5, 6, and 7; and so on. Start with the node number you want to find. This will be the last node or the first null node. Convert the node number to binary. For example, say there are 29 nodes in the tree and you want to find the last node. The number 29 decimal is 11101 binary. Remove the initial 1, leaving 1101. This is the path from the root to node 29: right, right, left, right. The first available null node is 30, which (after removing the initial 1) is 1110 binary: right, right, right, left.
+- To carry out the calculation, you can repeatedly use the % operator to find the remainder (0 or 1) when the node number n is divided by 2 and then use the / operator to actually divide n by 2. When n is less than 1, you're done. The sequence of remainders, which you can save in an array or string, is the binary number. (The least significant bits correspond to the lower end of the path)
+    ```
+    while(n >= 1) {
+        path[j++] = n % 2;
+        n = n / 2;
+    }
+    ```
+- You could also use a recursive approach in which the remainders are calculated each time the function calls itself and the appropriate direction is taken each time it returns.
+
+- After the appropriate node (or null child) is found, the heap operations are fairly straightforward. When trickling up or down, the structure of the tree doesn't change, so you don't need to move the actual nodes around. You can simply copy the data from one node to the next. This way, you don't need to connect and disconnect all the children and parents for a simple move. The Node class will need a field for the parent node because you'll need to access the parent when you trickle up. We'll leave the implementation of the tree heap as a programming project.
+
+- The tree heap operates in O(logN) time. As in the array-based heap the time is mostly spent doing the trickle-up and trickle-down operations, which take time proportional to the height of the tree
+
+### Heapsort
+- The efficiency of the heap data structure lends itself to a surprisingly simple and very efficient sorting algorithm called heapsort.
+    - The basic idea is to insert all the unordered items into a heap using the normal insert() routine.
+    Repeated application of the remove() routine will then remove the items in sorted order
+    ```
+    for(j=0; j<size; j++)
+        theHeap.insert( anArray[j] );   // from unsorted array
+    for(j=0; j<size; j++)
+        anArray[j] = theHeap.remove();  // to sorted array
+    ```
+    - Because insert() and remove() operate in O(logN) time, and each must be applied N times, the entire sort requires O(N*logN) time, which is the same as quicksort. However, it's not quite as fast as quicksort, partly because there are more operations in the inner while loop in trickleDown() than in the inner loop in quicksort.
+    - However, several tricks can make heapsort more efficient. The first saves time, and the second saves memory.
+    - If we insert N new items into a heap, we apply the trickleUp() method N times. However, all the items can be placed in random locations in the array and then rearranged into a heap with only N/2 applications of trickleDown(). This offers a small speed advantage.
+    - Two Correct Subheaps Make a Correct Heap
+        - To see how this approach works, you should know that trickleDown() will create a correct heap if, when an out-of-order item is placed at the root, both the child subheaps of this root are correct heaps. (The root can itself be the root of a subheap as well as of the entire heap.)
+        <img src="./images/2Z-HEAP.jpg"></img>
+        - This suggests a way to transform an unordered array into a heap. We can apply trickleDown() to the nodes on the bottom of the (potential) heap-that is, at the end of the array and work our way upward to the root at index 0. At each step the subheaps below us will already be correct heaps because we already applied trickleDown() to them. After we apply trickleDown() to the root, the unordered array will have been transformed into a heap
+        - Notice, however, that the nodes on the bottom row-those with no children'are already correct heaps, because they are trees with only one node; they have no relationships to be out of order. Therefore, we don't need to apply trickleDown() to these nodes. We can start at node N/2-1, the rightmost node with children, instead of N-1, the last node. Thus, we need only half as many trickle operations as we would using insert() N times
+        - Below Figure shows the order in which the trickle-down algorithm is applied, starting at node 6 in a 15-node heap.
+        <img src="./images/3A-HEAP.jpg"></img>
+        - The following code fragment applies trickleDown() to all nodes, except those on the bottom row, starting at N/2-1 and working back to the root:
+        ```
+        for(j=size/2-1; j >=0; j--)
+        theHeap.trickleDown(j);
+        ```
+    - A Recursive Approach
+        - A recursive approach can also be used to form a heap from an array. A heapify() method is applied to the root. It calls itself for the root's two children, then for each of these children's two children, and so on. Eventually, it works its way down to the bottom row, where it returns immediately whenever it finds a node with no children.
+        - After it has called itself for two child subtrees, heapify() then applies trickleDown() to the root of the subtree. This ensures that the subtree is a correct heap. Then heapify() returns and works on the subtree one level higher.
+        ```
+        heapify(int index) {      // transform array into heap
+            if(index > N/2-1)    // if node has no children,
+                return;           //    return
+            heapify(index*2+2);  // turn right subtree into heap
+            heapify(index*2+1);  // turn left subtree into heap
+            trickleDown(index);  // apply trickle-down to this node
+        }
+        This recursive approach is probably not quite as efficient as the simple loop.
+        ```
+    - Using the Same Array
+        - Our initial code fragment showed unordered data in an array. This data was then inserted into a heap, and finally removed from the heap and written back to the array in sorted order. In this procedure two size-N arrays are required: the initial array and the array used by the heap.
+        - In fact, the same array can be used both for the heap and for the initial array. This cuts in half the amount of memory needed for heapsort; no memory beyond the initial array is necessary.
+        - We've already seen how trickleDown() can be applied to half the elements of an array to transform them into a heap. We transform the unordered array data into a heap in place; only one array is necessary for this task. Thus, the first step in heapsort requires only one array.
+        - However, the situation becomes more complicated when we apply remove() repeatedly to the heap. Where are we going to put the items that are removed?
+        - Each time an item is removed from the heap, an element at the end of the heap array becomes empty; the heap shrinks by one. We can put the recently removed item in this newly freed cell. As more items are removed, the heap array becomes smaller and smaller, while the array of ordered data becomes larger and larger. Thus, with a little planning, it’s possible for the ordered array and the heap array to share the same space.
+        <img src="./images/3B-HEAP.jpg"></img>
+        - 
+- The heapSort.java Program
+    - We can put these two tricks
+        - applying trickleDown() without using insert(),
+        - and using the same array for the initial data and the heap-together in a program that performs heapsort
+    - The Efficiency of Heapsort
+        - The heapsort runs in O(N*logN) time. Although it may be slightly slower than quicksort, an advantage over quicksort is that it is less sensitive to the initial distribution of data. Certain arrangements of key values can reduce quicksort to slow O(N^2) time, whereas heapsort runs in O(N*logN) time no matter how the data is distributed.
 
 
 
@@ -2583,3 +2887,9 @@ If P is red, there are two possibilities:
 
 # Algorith books
 - Sedgewick
+
+
+# Various BIT Twiddling techniques
+- #BitManipulation
+
+
