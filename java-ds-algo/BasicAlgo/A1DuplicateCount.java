@@ -53,3 +53,17 @@ public class A1DuplicateCount {
     }
 
 }
+
+
+/**
+ * Important Functions
+ * 
+ * hashMap.put
+ * hashMap.containsKey(x)
+ * 
+ * myList.stream().collect(
+ *      Collectors.groupingBy(Function.identity(), Collectors.counting())
+ * );
+ */
+
+ 

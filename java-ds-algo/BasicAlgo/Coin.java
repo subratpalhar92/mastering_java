@@ -95,3 +95,14 @@ public class Coin {
 
 }
 
+/**
+ * Important functions
+ * int insertedCoinsSum = insertedCoins.stream().mapToInt(Integer::intValue).sum(); // sum
+ * 
+ * Set To List
+ * List<Integer> list = new ArrayList<>(coinSystem);
+ * 
+ * Recurrsion
+ */
+
+ 
