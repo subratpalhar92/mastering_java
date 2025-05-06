@@ -260,6 +260,23 @@ System.out.println("Next power of 2 for " + 13 + " is: " + n); // Output: 16
 
 ## JAVA TRICKS
 ```
+- DS & Their Methods
+
+```
+List - ArrayList, LinkedList, Vector
+    get(idx)    add(idx, ele)
+
+Set - HashSet, LinkedHashSet, TreeSet
+    add()
+
+Queue - PriorityQueue, ArrayDeque
+    offer() pool()
+
+Map - HashMap, LinkedHashMap, TreeMap, HashTable
+    put() get()
+
+```
+
 - ListNode
 - HashMap . computeIfAbsent . add
 
