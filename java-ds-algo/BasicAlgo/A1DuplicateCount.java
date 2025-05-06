@@ -58,6 +58,8 @@ public class A1DuplicateCount {
 /**
  * Important Functions
  * 
+ * Integer []arr = myList.toArray(new Integer[0]); // Otherwise Object
+ * 
  * hashMap.put
  * hashMap.containsKey(x)
  * 
