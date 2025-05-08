@@ -7,6 +7,50 @@
 
 
 
+- Popular Algorithm Library [JGraphT]
+    - Shortest path algorithms (Dijkstra, Bellman-Ford, A*)
+    - Minimum spanning tree algorithms (Prim, Kruskal)
+    - Maximum flow algorithms (Ford-Fulkerson, Edmonds-Karp)
+    - Graph traversal algorithms (BFS, DFS)
+    - Clustering algorithms
+    - Cycle detection
+    - Vertex and edge coloring
+    - 
+    - Other Graph Algorithms Library are : JGAlgo, Google Guava, ValueGraph, Network
+    - https://github.com/google/guava/wiki
+- For Tree Algorithms
+    - Scalified/tree
+    - 
+- For Machine Learning Algorithms
+    - Weka
+    - Deeplearning4j (DL4J)
+    - Smile (Statistical Machine Intelligence and Learning Engine)
+    - Java-ML
+    - Apache Mahout
+- For Numerical Algorithms
+    - nAG Library
+    - IMSL Java Library
+    - java.math.numerical.library
+
+
+
+- 
+- 
+- 
+- 
+- Probabilistic DS
+    - Bloom Filter: Checks if an item belongs to a set
+    - Cuckoo Filter: Checks if an item belongs to a set & offers better performance
+    - HyperLogLog: Finds number of unique elements in a set
+    - Count-Min Sketch: Finds frequency of items in a large data stream
+    - MinHash: Finds similarity between sets
+    - SkipList: It efficiently searches inserts & delets items from a sorted list
+    - 
+
+
+
+
+
 <h1 id="DATASTRUCTURE(DS)&Algorithm(Algo)"> DATA STRUCTURE (DS) & Algorithm (Algo) </h1>
 
 - What is a data structure ?
@@ -2410,7 +2454,7 @@ If P is red, there are two possibilities:
     - (Even if we used type long, the same problem would still arise for somewhat longer strings)
     - Notice that the key we eventually end up with is always less than the array size because we apply the modulo operator.
     - It's not the final index that's too big; it's the intermediate key values.
-    - It turns out that with Horner’s formulation we can apply the modulo operator (%) at each step in the calculation. This gives the same result as applying the modulo operator once at the end but avoids overflow
+    - It turns out that with Horner's formulation we can apply the modulo operator (%) at each step in the calculation. This gives the same result as applying the modulo operator once at the end but avoids overflow
     - So the modified version is
     ```
     public static int hashFunc3(String key) {
@@ -2545,7 +2589,7 @@ If P is red, there are two possibilities:
 - 
 
 
-## Heaps
+## Heaps & Vector
 - Priority queues may be used for task scheduling in computers, where some programs and activities should be executed sooner than others and are therefore given a higher priority.
 - 
 - 
@@ -2836,7 +2880,7 @@ In Java, a Vector class object could be used instead of an array; vectors can be
         - In fact, the same array can be used both for the heap and for the initial array. This cuts in half the amount of memory needed for heapsort; no memory beyond the initial array is necessary.
         - We've already seen how trickleDown() can be applied to half the elements of an array to transform them into a heap. We transform the unordered array data into a heap in place; only one array is necessary for this task. Thus, the first step in heapsort requires only one array.
         - However, the situation becomes more complicated when we apply remove() repeatedly to the heap. Where are we going to put the items that are removed?
-        - Each time an item is removed from the heap, an element at the end of the heap array becomes empty; the heap shrinks by one. We can put the recently removed item in this newly freed cell. As more items are removed, the heap array becomes smaller and smaller, while the array of ordered data becomes larger and larger. Thus, with a little planning, it’s possible for the ordered array and the heap array to share the same space.
+        - Each time an item is removed from the heap, an element at the end of the heap array becomes empty; the heap shrinks by one. We can put the recently removed item in this newly freed cell. As more items are removed, the heap array becomes smaller and smaller, while the array of ordered data becomes larger and larger. Thus, with a little planning, it's possible for the ordered array and the heap array to share the same space.
         <img src="./images/3B-HEAP.jpg"></img>
         - 
 - The heapSort.java Program
@@ -2848,16 +2892,495 @@ In Java, a Vector class object could be used instead of an array; vectors can be
 
 
 
+## Graphs
+- In a mathematical sense, a tree is a kind of graph
+- The data structures examined previously so far have an architecture dictated by the """algorithms used on them""".
+    For example, a binary tree is shaped the way it is because that shape makes it easy to search for data and insert new data.
+    The edges in a tree represent quick ways to get from node to node.
+- 
+- Graphs, on the other hand, often have a shape dictated by a physical or abstract problem.
+- For example, nodes in a graph may represent cities, while edges may represent airline flight routes between the cities.
+- 
+- nodes are traditionally called vertices (the singular is vertex) - the sharpest angel in the line
+- and the lines connecting them are edges
+- The vertices are usually labeled in some way-often, as shown here, with letters of the alphabet. Each edge is bounded by the two vertices at its ends.
+- It doesn't concern itself with physical distances or directions.
+- 
+- <img src="./images/3C-GRAPH.jpg"></img>
+- 
+- Also, one edge may represent several different route numbers, as in the case of the edge from I to H, which involves routes 101, 84, and 280.
+- It's the connectedness (or lack of it) of one intersection to another that's important, not the actual routes.
+- 
+- Adjacency
+    - Two vertices are said to be adjacent to one another if they are connected by a single edge
+    - The vertices adjacent to a given vertex are sometimes said to be its neighbors vertices
+- Paths
+    - A path is a sequence of edges that connects various vertices
+- Connected Graphs
+    - A graph is said to be connected if there is at least one "PATH" from every vertex to every other vertex
+- Directed and Weighted Graphs
+    - non-directed graphs means that the edges don't have a direction; you can go either way on them
+    - However, graphs are often used to model situations in which you can go in only one direction along an edge-from A to B but not from B to A, as on a one-way street. Such a graph is said to be directed
+    - In some graphs, edges are given a weight, a number that can represent the physical distance between two vertices, or the time it takes to get from one vertex to another, or how much it costs to travel from vertex to vertex (on airline routes, for example). Such graphs are called weighted graphs.
+    - 
+- 
 
+### Historical Note
+- One of the first mathematicians to work with graphs was Leonhard Euler in the early eighteenth century. He solved a famous problem dealing with the bridges in the town of Konigsberg, Poland. This town included an island and seven bridges, as shown in Figure
+- <img src="./images/3D-GRAPH.jpg"></img>
+- The problem, much discussed by the townsfolk, was to find a way to walk across all seven bridges without recrossing any of them. We won't recount Euler's solution to the problem; it turns out that there is no such path. However, the key to his solution was to represent the problem as a graph, with land areas as vertices and bridges as edges.
 
+### Representing a Graph in a Program
+- In a very abstract graph program you could simply number the vertices 0 to N-1 (where N is the number of vertices).
+- You wouldn't need any sort of variable to hold the vertices because their usefulness would result from their relationships with other vertices.
+- Vertices (In Abstract Form)
+    - In a very abstract graph program you could simply number the vertices 0 to N-1 (where N is the number of vertices). You wouldn't need any sort of variable to hold the vertices because their usefulness would result from their relationships with other vertices.
+    - In most situations, however, a vertex represents some real-world object, and the object must be described using data items. If a vertex represents a city in an airline route simulation, for example, it may need to store the name of the city, its altitude, its location, and other such information. Thus, it's usually convenient to represent a vertex by an object of a vertex class.
+    ```
+    class Vertex {
+        public char label;        // label (e.g. 'A')
+        public boolean wasVisited;
+        
+        public Vertex(char lab) { // constructor
+            label = lab;
+            wasVisited = false;
+        }
+    }
+    ```
+    - Vertex objects can be placed in an array and referred to using their index number
+    - The vertices might also be placed in a list or some other data structure
+    - Whatever structure is used, this storage is for convenience only. It has no relevance to how the vertices are connected by edges
+    - Here we'll store them in an array called vertexList
 
+- Edges
+    - Like we tried to store TREE in Array 
+    - A graph, however, doesn't usually have the same kind of fixed organization as a tree
+    - In a binary tree, each node has a maximum of two children, but in a graph each vertex may be connected to an arbitrary number of other vertices
+    - So its impossible to find the next array index
+    - To model this sort of free-form organization, a different approach to representing edges is preferable to that used for trees.
+    - Two methods are commonly used for graphs: the "ADJACENCY MATRIX" & the "ADJACENCY LIST"
+    - One vertex is said to be adjacent to another if they're connected by a single edge
+    - 
+    - The Adjacency Matrix
+        - An adjacency matrix is a two-dimensional array in which the elements indicate whether an edge is present between two vertices
+        - If a graph has N vertices, the adjacency matrix is an NxN array
+        ```
+          A B C D
+        A 0 1 1 1
+        B 1 0 0 1
+        C 1 0 0 0
+        D 1 1 0 0
+        adjacency matrix for the graph in above Graph
+        ```
+        - The vertices are used as headings for both rows and columns. An edge between two vertices is indicated by a 1; the absence of an edge is a 0
+        - Note that the triangular-shaped part of the matrix above the identity diagonal is a mirror image of the part below; both triangles contain the same information. This redundancy may seem inefficient, but there's no convenient way to create a triangular array in most computer languages, so it's simpler to accept the redundancy. Consequently, when you add an edge to the graph, you must make two entries in the adjacency matrix rather than one.
+        - Triangular Array
+        ```
+                -
+            -   -
+        -   -   -
+            -   -
+                -
+        https://en.wikipedia.org/wiki/Triangular_array
+        In mathematics and computing, a triangular array of numbers, polynomials, or the like, is a doubly indexed sequence
+        in which each row is only as long as the row's own index
+        That is, the ith row contains only i elements.
+        ```
+        - 
+    - The Adjacency List
+        - The list in adjacency list refers to a linked list
+        - Actually, an adjacency list is an array of lists (or sometimes a list of lists). Each individual list shows what vertices a given vertex is adjacent to
+        ```
+        A   B->C->D
+        B   A->D
+        C   A
+        D   A->B
+        ```
+        - The adjacency list shows which vertices are adjacent to - that is, one edge away from - a given vertex, not paths from vertex to vertex
+    - Sometimes adjacency matrix approach is efficient, but sometimes the list approach is more efficient
+    - 
+- Adding Vertices and Edges to a Graph
+    - To add a vertex to a graph,
+    you make a new vertex object with new and insert it into your vertex array, 'vertexList'.
+    In a real-world program a vertex might contain many data items, but for simplicity we'll assume that it contains only a single character.
+    Thus, the creation of a vertex looks something like this:
+    ```
+    vertexList[nVerts++] = new Vertex('F');
+    ```
+    - How you add an edge to a graph depends on whether you're using an adjacency matrix or adjacency lists to represent the graph.
+    - Let's say that you're using an adjacency matrix and want to add an edge between vertices 1 and 3. These numbers correspond to the array indices in vertexList where the vertices are stored.
+    ```
+    adjMat[1][3] = 1;
+    adjMat[3][1] = 1;
+    ```
+    - If you were using an adjacency list, you would add a 1 to the list for 3, and a 3 to the list for 1.
+    - 
+- The Graph Class
+    - Let's look at a class Graph that contains methods for creating a vertex list and an adjacency matrix, and for adding vertices and edges to a Graph object
+    - To add vertices and edges to a Graph object
+    ```
+    class Graph {
+        private final int MAX_VERTS = 20;
+        private Vertex vertexList[]; // array of vertices
+        private int adjMat[][];      // adjacency matrix
+        private int nVerts;          // current number of vertices
+        
+        public Graph() {
+            vertexList = new Vertex[MAX_VERTS]; // adjacency matrix
+            adjMat = new int[MAX_VERTS][MAX_VERTS];
+            nVerts = 0;
+            for(int j=0; j<MAX_VERTS; j++)      // set adjacency
+                for(int k=0; k<MAX_VERTS; k++)   //    matrix to 0
+                    adjMat[j][k] = 0;
+        }  // end constructor
+        
+        public void addVertex(char lab) { // argument is label
+            vertexList[nVerts++] = new Vertex(lab);
+        }
+        
+        public void addEdge(int start, int end) {
+            adjMat[start][end] = 1;
+            adjMat[end][start] = 1;
+        }
+        
+        public void displayVertex(int v) {
+            System.out.print(vertexList[v].label);
+        }
+    }
+    ```
+    - Within the Graph class, vertices are identified by their index number in vertexList.
+    - The adjacency matrix (or the adjacency list) provides information that is local to a given vertex. Specifically, it tells you which vertices are connected by a single edge to a given vertex. To answer more global questions about the arrangement of the vertices, we must resort to various algorithms
+    - 
+- Searches
+    - One of the most fundamental operations to perform on a graph is finding which vertices can be reached from a specified vertex
+    - For example, imagine trying to find out how many towns in the United States can be reached by passenger train from Kansas City (assuming that you don't mind changing trains)
+    - Some towns could be reached. Others couldn't be reached because they didn't have passenger rail service.
+    - Possibly others couldn't be reached, even though they had rail service, because their rail system (the narrow-gauge Hayfork-Hicksville RR, for example) didn't connect with the standard-gauge line you started on or any of the lines that could be reached from your line
+    - Consider a PCB,,, with pins from the ICs protruding through holes in the board.
+    - The ICs are soldered in place, and their pins are electrically connected to other pins by traces
+    - In a graph, each pin might be represented by a vertex, and each trace by an edge. On a circuit board there are many electrical circuits that aren't connected to each other, so the graph is by no means a connected one. During the design process, therefore, it may be genuinely useful to create a graph and use it to find which pins are connected to the same electrical circuit.
+    - 
+    - Now you need an algorithm that provides a systematic way to start at a specified vertex and then move along edges to other vertices in such a way that, when it's done, you are guaranteed that it has visited [DISPLAYING IT] every vertex that's connected to the starting vertex.
+    - 
+    - There are two common approaches to searching a graph: depth-first search (DFS) and breadth-first search (BFS)
+    - The depth-first search is implemented with a stack, whereas the breadth-first search is implemented with a queue.
+    - 
+    - Depth-First Search (DFS)
+        - The depth-first search uses a stack to remember where it should go when it reaches a dead end
+        - figure show the idea behind the depth-first search & the order in which the vertices are visited
+        <img src="./images/3E_GRAPH.jpg"></img>
+        - You pick a starting point - in this case, vertex A.
+        - You then do three things: visit this vertex, push it onto a stack so you can remember it & mark it so you won't visit it again
+        - Next, you go to any vertex adjacent to A that hasn't yet been visited
+        - We'll assume the vertices are selected in alphabetical order, so that brings up B.
+        - You visit B, mark it, and push it on the stack.
+        - 
+        - Rule 1:: If possible, visit an adjacent unvisited vertex, mark it, and push it on the stack.
+        - Rule 2:: If you can't follow Rule 1, then, if possible, pop a vertex off the stack.
+        - Rule 3:: If you can't follow Rule 1 or Rule 2, you're done.
+        - 
+        - An analogy you might think about in relation to depth-first search is a maze
+        - 
+        - If you use the algorithm on an unconnected graph, it will find only those vertices that are connected to the starting vertex.
+        ```
+        /** RETURNS AN UNVISITED VERTEX ADJACENT TO v */
+ 
+        public int getAdjUnvisitedVertex(int v) {
+            for(int j=0; j<nVerts; j++)
+                if(adjMat[v][j]==1 && vertexList[j].wasVisited==false)
+                    return j;               // return first such vertex
+                return -1;                  // no such vertices
+        }
 
+        This code embodies the three rules listed earlier
+        It loops until the stack is empty
+        Within the loop, it does four things:
+            1. It examines the vertex at the top of the stack, using peek().
+            2. It tries to find an unvisited neighbor of this vertex.
+            3. If it doesn't find one, it pops the stack.
+            4. If it finds such a vertex, it visits that vertex and pushes it onto the stack.
+            
+        public void dfs() { // depth-first search begin at vertex 0
+            vertexList[0].wasVisited = true;  // mark it
+            displayVertex(0);                 // display it
+            theStack.push(0);                 // push it
+            
+            while( !theStack.isEmpty() ) {      // until stack empty,
+                // get an unvisited vertex adjacent to stack top
+                int v = getAdjUnvisitedVertex( theStack.peek() );
+                if(v == -1)                    // if no such vertex,
+                    theStack.pop();             //    pop a new one
+                else {                           // if it exists,
+                    vertexList[v].wasVisited = true;  // mark it
+                    displayVertex(v);                 // display it
+                    theStack.push(v);                 // push it
+                }
+            }
+            
+            // stack is empty, so we're done
+            for(int j=0; j<nVerts; j++)    // reset flags
+                vertexList[j].wasVisited = false;
+        }
+        ```
+        - At the end of dfs(), we reset all the wasVisited flags so we'll be ready to run dfs() again later. The stack should already be empty, so it doesn't need to be reset.
+        - 
+    - Depth-First Search and Game Simulations
+        - Depth-first searches are often used in simulations of games (and game-like situations in the real world). In a typical game you can choose one of several possible actions. Each choice leads to further choices, each of which leads to further choices, and so on into an ever-expanding tree-shaped graph of possibilities. A choice point corresponds to a vertex, and the specific choice taken corresponds to an edge, which leads to another choice-point vertex.
+        - Imagine a game of tic-tac-toe. If you go first, you can make one of nine possible moves. Your opponent can counter with one of eight possible moves, and so on
+        - Even in this simple game the number of paths is surprisingly large. If we ignore simplifications from symmetry, there are 9*8*7*6*5*4*3*2*1 paths in the nine graphs. This is 9 factorial (9!) or 362,880. In a game like chess where the number of possible moves is much greater, even the most powerful computers (like IBM's "Deep Blue") cannot "see" to the end of the game. They can only follow a path to a certain depth and then evaluate the board to see if it appears more favorable than other choices.
+        - 
+    - Breadth-First Search (BFS)
+        - the algorithm likes to stay as close as possible to the starting point. It visits all the vertices adjacent to the starting vertex, and only then goes further afield. This kind of search is implemented using a queue instead of a stack.
+        <img src="./images/3F_GRAPH.jpg"></img>
+        Figure shows the same graph as above, but here the breadth-first search is used
+        - Rule 1.
+        Visit the next unvisited vertex (if there is one) that's adjacent to the current vertex, mark it & insert it into the queue
+        - Rule 2.
+        If you can't carry out Rule 1 because there are no more unvisited vertices,
+        remove a vertex from the queue (if possible) and make it the current vertex
+        - Rule 3.
+        If you can't carry out Rule 2 because the queue is empty, you're done.
+        - 
+        - Thus, you first visit all the vertices adjacent to A, inserting each one into the queue as you visit it. Now you've visited A, B, C, D, and E. At this point the queue (from front to rear) contains BCDE.
+        - There are no more unvisited vertices adjacent to A, so you remove B from the queue and look for vertices adjacent to it. You find F, so you insert it in the queue. There are no more unvisited vertices adjacent to B, so you remove C from the queue. It has no adjacent unvisited vertices, so you remove D and visit G. D has no more adjacent unvisited vertices, so you remove E. Now the queue is FG. You remove F and visit H, and then you remove G and visit I
+        ```
+        public void bfs() {                   // breadth-first search begin at vertex 0
+            vertexList[0].wasVisited = true; // mark it
+            displayVertex(0);                // display it
+            theQueue.insert(0);              // insert at tail
+            int v2;
+            
+            while( !theQueue.isEmpty() ) {     // until queue empty, remove vertex at head
+                int v1 = theQueue.remove();
+                // until it has no unvisited neighbors
+                while( (v2=getAdjUnvisitedVertex(v1)) != -1 ) { // get one,
+                    vertexList[v2].wasVisited = true;  // mark it
+                    displayVertex(v2);                 // display it
+                    theQueue.insert(v2);               // insert it
+                }   // end while(unvisited neighbors)
+            }  // end while(queue not empty)
+            // queue is empty, so we're done
+            for(int j=0; j<nVerts; j++)             // reset flags
+                vertexList[j].wasVisited = false;
+            }
+        ```
+        - The breadth-first search has an interesting property: It first finds all the vertices that are one edge away from the starting point, then all the vertices that are two edges away, and so on. This is useful if you're trying to find the shortest path from the starting vertex to a given vertex. You start a BFS, and when you find the specified vertex, you know the path you've traced so far is the shortest path to the node. If there were a shorter path, the BFS would have found it already.
+        - 
+- Minimum Spanning "Trees" (Min No Of Edges Connecting Vertices)
+    - Suppose that you've designed a printed circuit board and you want to be sure you've used the minimum number of traces
+    - That is, you don't want any extra connections between pins; such extra connections would take up extra room and make other circuits more difficult to lay out.
+    - It would be nice to have an algorithm that, for any connected set of pins and traces (vertices and edges, in graph terminology), would remove any extra traces. The result would be a graph with the minimum number of edges necessary to connect the vertices.
+    - It would be nice to have an algorithm that, for any connected set of pins and traces (vertices and edges, in graph terminology), would remove any extra traces.
+    - The result would be a graph with the minimum number of edges necessary to connect the vertices.
+    - For example, In below Figure a shows five vertices with an excessive number of edges, while Figure b shows the same vertices with the minimum number of edges necessary to connect them. This constitutes a minimum spanning tree (MST).
+    <img src="./images/3G_GRAPHS.jpg"></img>
+    - Remember that we’re not worried here about the length of the edges. We're not trying to find a minimum physical length, just the minimum number of edges.
+    - There are many possible minimum spanning trees for a given set of vertices. Figure 13.10b shows edges AB, BC, CD, and DE, but edges AC, CE, ED, and DB would do just as well.
+    - The arithmetically inclined will note that the number of edges E in a minimum spanning tree is always one less than the number of vertices V:
+    ```
+    E = V - 1
+    ```
+    - 
+    - The algorithm for creating the minimum spanning tree is almost identical to that used for searching. It can be based on either the depth-first search or the breadth-first search. In our example we'll use the depth-first search.
+    - 
+    - Perhaps surprisingly, by executing the depth-first search and recording the edges you've traveled to make the search, you automatically create a minimum spanning tree. The only difference between the minimum spanning tree method mst(), which we'll see in a moment, and the depth-first search method dfs(), which we saw earlier, is that mst() must somehow record the edges traveled.
+    ```
+    INSIDE MST
 
+    while( !theStack.isEmpty() ) {      // until stack empty get stack top
+        int currentVertex = theStack.peek();
+        // get next unvisited neighbor
+        int v = getAdjUnvisitedVertex(currentVertex);
+        if(v == -1)                     // if no more neighbors
+            theStack.pop();              //    pop it away
+        else {                            // got a neighbor
+            vertexList[v].wasVisited = true;  // mark it
+            theStack.push(v);                 // push it display edge
+            displayVertex(currentVertex);     // from currentV
+            displayVertex(v);                 // to v
+            System.out.print(" ");
+        }
+    }  // end while(stack not empty)
 
+    // stack is empty, so we're done
+    for(int j=0; j<nVerts; j++)          // reset flags
+        vertexList[j].wasVisited = false;
+    
+    END OF MST
 
+    this code is very similar to dfs().
+    In the else statement, however, the "current vertex" & its "next unvisited neighbor" are displayed.
+    
+    These two vertices define the edge that the algorithm is currently traveling to get to a new vertex & it's these edges that make up the minimum spanning tree
 
+    Minimum spanning tree: AB BC CD DE
+    ```
+    - The minimum spanning tree is easily derived from the depth-first search because the DFS visits all the nodes, but only once. It never goes to a node that has already been visited. When it looks down an edge that has a visited node at the end, it doesn't follow that edge. It never travels any edges that aren't necessary. Thus, the path of the DFS algorithm through the graph must be a minimum spanning tree.
+    - 
+    - 
+    - 
 
+- Topological Sorting with Directed Graphs
+    - Topological sorting is another operation that can be modeled with graphs
+    - It's useful in situations in which items or events must be arranged in a specific order.
+    - 
+    - Directed Graphs
+        - <img src="./images/3H_GRAPHS.jpg"></img>
+        - The edges need to have a direction. When this is the case, the graph is called a directed graph. In a directed graph you can proceed only one way along an edge. The arrows in the figure show the direction of the edges.
+        - In a program, the difference between a non-directed graph and a directed graph is that an edge in a directed graph has only one entry in the adjacency matrix.
+        - 
+        - Each edge is represented by a single 1. The row labels show where the edge starts, and the column labels show where it ends. Thus, the edge from A to B is represented by a single 1 at row A column B. If the directed edge were reversed so that it went from B to A, there would be a 1 at row B column A instead.
+        ```
+          A B C
+        A 0 1 0
+        B 0 0 1
+        C 0 0 0
+        ```
+        - For a non-directed graph, as we noted earlier, half of the adjacency matrix mirrors the other half, so half the cells are redundant. However, for a weighted graph, every cell in the adjacency matrix conveys unique information. The halves are not mirror images.
+        - For a directed graph, the method that adds an edge thus needs only a single statement
+        ```
+        public void addEdge(int start, int end) { // directed graph
+            adjMat[start][end] = 1;
+        }
+        ```
+        - 
+        - If you use the adjacency-list approach to represent your graph, then A has B in its list but - unlike a non-directed graph-B does not have A in its list.
+        - 
+    - Topological Sorting
+        - <img src="./images/3I_GRAPH.jpg"></img>
+        - Imagine that you make a list of all the courses necessary for your degree
+        - You then arrange the courses in the order you need to take them. Obtaining your degree is the last item on the list, which might look like: BAEDGCFH
+        - Arranged this way, the graph is said to be topologically sorted. Any course you must take before some other course occurs before it in the list.
+        - Actually, many possible orderings would satisfy the course prerequisites. You could take the English courses C and F first, for example: CFBAEDGH
+        - Job scheduling is an important example. If you're building a car, you want to arrange things so that brakes are installed before the wheels, and the engine is assembled before it's bolted onto the chassis. Car manufacturers use graphs to model the thousands of operations in the manufacturing process, to ensure that everything is done in the proper order.
+        - Modeling job schedules with graphs is called critical path analysis.
+        - a weighted graph (discussed in the next chapter) can be used, which allows the graph to include the time necessary to complete different tasks in a project. The graph can then tell you such things as the minimum time necessary to complete the entire project.
+        - The idea behind the topological sorting algorithm is unusual but simple. Two steps are necessary
+            - 1. Find a vertex that has no successors.
+            The successors to a vertex are those vertices that are directly "downstream" from it - that is, connected to it by an edge that points in their direction. If there is an edge pointing from A to B, then B is a successor to A. 
+            - 2. Delete this vertex from the graph, and insert its label at the beginning of a list.
+            - Steps 1 and 2 are repeated until all the vertices are gone. At this point, the list shows the vertices arranged in topological order.
+            - The topological sorting algorithm works on unconnected graphs as well as connected graphs.
+            - 
+        - Cycles and Trees
+            - One kind of graph the topological-sort algorithm cannot handle is a graph with cycles. What's a cycle? It's a path that ends up where it started.
+            - <img src="./images/3J_GRAPH.jpg"></img>
+            - A graph with no cycles is called a tree. The binary and multiway trees we saw earlier in this book are trees in this sense. However, the trees that arise in graphs are more general than binary and multiway trees, which have a fixed maximum number of child nodes. In a graph, a vertex in a tree can be connected to any number of other vertices, provided that no cycles are created.
+            - It's easy to figure out if a non-directed graph has cycles. If a graph with N nodes has more than N-1 edges, it must have cycles. You can make this clear to yourself by trying to draw a graph with N nodes and N edges that does not have any cycles.
+            - A topological sort must be carried out on a directed graph with no cycles. Such a graph is called a directed acyclic graph, often abbreviated DAG.
+            ```
+            public void topo() {            // topological sort
+                int orig_nVerts = nVerts;  // remember how many verts
+                while(nVerts > 0) {          // while vertices remain,
+                    // get a vertex with no successors, or -1
+                    int currentVertex = noSuccessors();
+                    if(currentVertex == -1) {       // must be a cycle
+                        System.out.println("ERROR: Graph has cycles");
+                        return;
+                    }
+                    // insert vertex label in sorted array (start at end)
+                    sortedArray[nVerts-1] = vertexList[currentVertex].label;
+                    deleteVertex(currentVertex);  // delete vertex
+                }
+                
+                // vertices all gone; display sortedArray
+                System.out.print("Topologically sorted order: ");
+                for(int j=0; j<orig_nVerts; j++)
+                    System.out.print( sortedArray[j] );
+                System.out.println("");
+            }
+            ```
+            - The work is done in the while loop, which continues until the number of vertices is reduced to 0. Here are the steps involved:
+                - 1. Call noSuccessors() to find any vertex with no successors.
+                - 2. If such a vertex is found, put the vertex label at the end of sortedArray[] and delete the vertex from graph.
+                - 3. If an appropriate vertex isn't found, the graph must have a cycle.
+            - The last vertex to be removed appears first on the list, so the vertex label is placed in sortedArray starting at the end and working toward the beginning, as nVerts (the number of vertices in the graph) gets smaller.
+            - If vertices remain in the graph but all of them have successors, the graph must have a cycle, and the algorithm displays a message and quits. If there are no cycles, the while loop exits, and the list from sortedArray is displayed, with the vertices in topologically sorted order.
+            - The noSuccessors() method uses the adjacency matrix to find a vertex with no successors. In the outer for loop, it goes down the rows, looking at each vertex. For each vertex, it scans across the columns in the inner for loop, looking for a 1. If it finds one, it knows that that vertex has a successor, because there's an edge from that vertex to another one. When it finds a 1, it bails out of the inner loop so that the next vertex can be investigated.
+            - Only if an entire row is found with no 1s do we know we have a vertex with no successors; in this case, its row number is returned. If no such vertex is found, -1 is returned. Here's the noSuccessors() method
+            ```
+            public int noSuccessors() {  // returns vert with no successors (or -1 if no such verts)
+                boolean isEdge;  // edge from row to column in adjMat
+                for(int row=0; row<nVerts; row++) {  // for each vertex,
+                    isEdge = false;                 // check edges
+                    for(int col=0; col<nVerts; col++) {
+                        if( adjMat[row][col] > 0 ) {   // if edge to another,
+                            isEdge = true;
+                            break;                    // this vertex
+                        }                         //    has a successor
+                    }                            //    try another
+                    if( !isEdge )                   // if no edges,
+                        return row;                  //    has no successors
+                }
+                return -1;                         // no such vertex
+            }
+            ```
+            - Deleting a vertex is straightforward except for a few details. The vertex is removed from the vertexList[] array, and the vertices above it are moved down to fill up the vacant position. Likewise, the row and column for the vertex are removed from the adjacency matrix, and the rows and columns above and to the right are moved down and to the left to fill the vacancies. These tasks are carried out by the deleteVertex(), moveRowUp(), and moveColLeft() methods, which you can examine in the complete listing for topo.java
+    - 
 
+- Connectivity in Directed Graphs
+    - When we try to find all the connected vertices in a directed graph, things get more complicated. You can't just start from a randomly selected vertex and expect to reach all the other connected vertices.
+    - <img src="./images/3K_GRAPH.jpg"></img>
+    - If you start on A, you can get to C but not to any of the other vertices. If you start on B, you can't get to D, and if you start on C, you can't get anywhere. The meaningful question about connectivity is: What vertices can you reach if you start on a particular vertex
+    - 
+    - The Connectivity Table
+        - You can easily modify the dfs.java program to start the search on each vertex in turn.
+        - For the graph of above Figure the output will look something like
+        ```
+        AC
+        BACE
+        C
+        DEC
+        EC
+        ```
+        - The first letter is the starting vertex and subsequent letters show the vertices that can be reached (either directly or via other vertices) from the starting vertex.
+        - 
+    - 
+    - Warshall's Algorithm
+        - In some applications it's important to find out quickly whether one vertex is reachable from another vertex.
+        - You could examine the connectivity table, but then you would need to look through all the entries on a given row, which would take O(N) time (where N is the average number of vertices reachable from a given vertex). But you're in a hurry; is there a faster way?
+        - It's possible to construct a table that will tell you instantly (that is, in O(1) time) whether one vertex is reachable from another. Such a table can be obtained by systematically modifying a graph's adjacency matrix. The graph represented by this revised adjacency matrix is called the transitive closure of the original graph.
+        - Remember that in an ordinary adjacency matrix the row number indicates where an edge starts and the column number indicates where it ends. (This is similar to the arrangement in the connectivity table.) A 1 at the intersection of row C and column D means there's an edge from vertex C to vertex D. You can get from one vertex to the other in one step. (Of course, in a directed graph it does not follow that you can go the other way, from D to C.)
+        ```
+          A B C D E
+        A 0 0 1 0 0
+        B 1 0 0 0 1
+        C 0 0 0 0 0
+        D 0 0 0 0 1
+        E 0 0 1 0 0
+        ```
+        - We can use Warshall's algorithm to change the adjacency matrix into the transitive closure of the graph. This algorithm does a lot in a few lines of code. It's based on a simple idea:
+        - If you can get from vertex L to vertex M, and you can get from M to N, then you can get from L to N.
+        - We've derived a two-step path from two one-step paths. The adjacency matrix shows all possible one-step paths, so it's a good starting place to apply this rule.
+        - You might wonder if this algorithm can find paths of more than two edges. After all, the rule only talks about combining two one-edge paths into one two-edge path. As it turns out, the algorithm will build on previously discovered multi-edge paths to create paths of arbitrary length. The implementation we will describe guarantees this result
+        - Here's how it works
+        - We're going to examine every cell in the adjacency matrix, one row at a time.
+        - 
+        - Row A
+            - We start with row A. There's nothing in columns A and B, but there's a 1 at column C, so we stop there.
+            - Now the 1 at this location says there is a path from A to C. If we knew there was a path from some vertex X to A, then we would know there was a path from X to C. Where are the edges (if any) that end at A? They're in column A. So we examine all the cells in column A
+            - In Table 13.6 there's only one 1 in column A: at row B. It says there's an edge from B to A. So we know there's an edge from B to A, and another (the one we started with) from A to C. From this we infer that we can get from B to C in two steps. You can verify this is true by looking at the graph
+            - To record this result, we put a 1 at the intersection of row B and column C. The result is shown in Figure a. The remaining cells of row A are blank.
+            - <img src="./images/3L_GRAPH.jpg"></img>
+        - Rows B, C, and D
+            - We go to row B. The first cell, at column A, has a 1, indicating an edge from B to A. Are there any edges that end at B? We look in column B, but it's empty, so we know that none of the 1s we find in row B will result in finding longer paths because no edges end at B.
+            - Row C has no 1s at all, so we go to row D. Here we find an edge from D to E. However, column D is empty, so there are no edges that end on D.
+        - Row E
+            - In row E we see there's an edge from E to C. Looking in column E we see the first entry is for the edge B to E, so with B to E and E to C we infer there's a path from B to C. However, it's already been discovered, as indicated by the 1 at that location.
+            - There's another 1 in column E, at row D. This edge from D to E plus the one from E to C imply a path from D to C, so we insert a 1 in that cell. The result is shown in Figure 13.16b.
+        - Warshall's algorithm is now complete. We've added two 1s to the adjacency matrix, which now shows which nodes are reachable from another node in any number of steps. If we drew a graph based on this new matrix, it would be the transitive closure of the graph
+    - Implementation of Warshall's Algorithm
+        - One way to implement Warshall's algorithm is with three nested loops (as suggested by Sedgewick. 
+        - The outer loop looks at each row; let's call its variable y. The loop inside that looks at each cell in the row; it uses variable x. If a 1 is found in cell (x, y), there's an edge from y to x, and the third (innermost) loop is activated; it uses variable z.
+        - The third loop examines the cells in column y, looking for an edge that ends at y. (Note that y is used for rows in the first loop but for the column in the third loop.) If there's a 1 in column y at row z, then there's an edge from z to y. With one edge from z to y and another from y to x, it follows that there's a path from z to x, so you can put a 1 at (x, z). We'll leave the details as an exercise.
+        - 
+    - 
+- 
+- 
+- 
+
+## Weighted Graphs
+- 
 
 
 
