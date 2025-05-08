@@ -30,7 +30,7 @@ public class Coin {
 
             List<Integer> list = new ArrayList<>(coinSystem);
             Collections.sort(list);
-            System.out.println(list);
+            // System.out.println(list);
 
             changeToReturn = breakIntoChnage(totalChangeToBeReturned, list, new HashMap<>());
             return changeToReturn;
@@ -47,7 +47,7 @@ public class Coin {
         int idx = coinSystem.size() - 1;
         while (idx >= 0) {
             int denomination = coinSystem.get(idx);
-            System.out.println("denomination = " + denomination);
+            // System.out.println("denomination = " + denomination);
 
             if (totalChangeToBeReturned < denomination) {
                 // do nothing wait for the next denomination
@@ -75,19 +75,22 @@ public class Coin {
      * coinSystem - [1, 2, 5, 10, 20, 50, 100, 200] - desired sorted
      */
     public static void main(String[] args) {
-        Integer productCost = 150;
+        Integer productCost = 335;
         List<Integer> insertedCoins = new ArrayList<>();
-            insertedCoins.add(100);
-            insertedCoins.add(500);
+            // insertedCoins.add(100);
+            // insertedCoins.add(16);
+            insertedCoins.add(2452);
         Set<Integer> coinSystem = new HashSet<>();
             coinSystem.add(1);
             coinSystem.add(2);
-            coinSystem.add(5);
+            // coinSystem.add(5);
             coinSystem.add(10);
             coinSystem.add(20);
             coinSystem.add(50);
             coinSystem.add(100);
             coinSystem.add(200);
+
+            coinSystem.add(500);
 
         Map<Integer, Integer> change = calculateMinCoinsForChange(productCost, insertedCoins, coinSystem);
         System.out.println(change);
@@ -98,11 +101,10 @@ public class Coin {
 /**
  * Important functions
  * int insertedCoinsSum = insertedCoins.stream().mapToInt(Integer::intValue).sum(); // sum
- * 
+ *
  * Set To List
  * List<Integer> list = new ArrayList<>(coinSystem);
- * 
+ *
  * Recurrsion
  */
 
- 
