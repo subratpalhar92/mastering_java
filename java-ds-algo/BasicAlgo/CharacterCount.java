@@ -25,6 +25,21 @@ public class CharacterCount {
         TreeMap<String, Long> sortedMap = new TreeMap<>(finalCollections);
         System.out.println(sortedMap);
 
+
+        /**
+         * Way2 : For bigger operation [Memory constrained operation]
+         */
+
+
+        String str2 = "I am A java developer";
+        // str2.chars().forEach(System.out::print);
+        Map<Character, Long> finalCollections2 = str2.chars() // IntStream
+            .mapToObj(i -> (char) i) // Stream<Character>
+            // .map(c -> c.toUpperCase())
+            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        TreeMap<Character, Long> sortedMap2 = new TreeMap<>(finalCollections2);
+        System.out.println(sortedMap2);
+
     }
 
 }
