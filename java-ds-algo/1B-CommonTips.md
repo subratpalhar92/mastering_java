@@ -58,13 +58,16 @@ Helps In Algorithm
 
 ## String -to- Interger -to- int -to- Interger -to- String conversion
 ```
+    new Integer(789)intValue();                 /** intValue        WRPER ->int O|R you can directly assign */
+
+    new Integer(123);  Integer.valueOf(123)     /** new Integer     int->INTGR O|R you can directly assign */
+
+
+
     int pmtv = Integer.parseInt("123");         /** parseInt        STR->PMTV */
 
     Integer wrppr = Integer.valueOf(str);       /** valueOf         STR->WRPER */
 
-    new Integer(789)intValue();                 /** intValue        WRPER ->int O|R you can directly assign */
-
-    new Integer(123);  Integer.valueOf(123)     /** new Integer     int->INTGR O|R you can directly assign */
 
     Integer.toString(123);  new Integer(1415).toString();   /** toString    WRPER|PMTV->STR  */
 
@@ -256,6 +259,12 @@ n |= n >> 16; // For 32-bit integers
 n++;
 System.out.println("Next power of 2 for " + 13 + " is: " + n); // Output: 16
 ```
+- 
+
+## Common String Methods
+- 
+
+## Common Array Methods
 - 
 
 ## JAVA TRICKS
