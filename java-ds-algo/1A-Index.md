@@ -34,6 +34,16 @@
 
 
 
+
+Skiplist: a common in-memory index type. Used in Redis
+Hash index: a very common implementation of the "Map" data structure (or "Collection")
+SSTable: immutable on-disk "Map" implementation
+LSM tree: Skiplist + SSTable. High write throughput
+B-tree: disk-based solution. Consistent read/write performance
+Inverted index: used for document indexing. Used in Lucene
+Suffix tree: for string pattern search
+R-tree: multi-dimension search, such as finding the nearest neighbor
+
 - 
 - 
 - 
@@ -2961,7 +2971,7 @@ In Java, a Vector class object could be used instead of an array; vectors can be
     - Two methods are commonly used for graphs: the "ADJACENCY MATRIX" & the "ADJACENCY LIST"
     - One vertex is said to be adjacent to another if they're connected by a single edge
     - 
-    - The Adjacency Matrix
+    - [[[[[ The Adjacency Matrix ]]]]]
         - An adjacency matrix is a two-dimensional array in which the elements indicate whether an edge is present between two vertices
         - If a graph has N vertices, the adjacency matrix is an NxN array
         ```
@@ -2971,11 +2981,24 @@ In Java, a Vector class object could be used instead of an array; vectors can be
         C 1 0 0 0
         D 1 1 0 0
         adjacency matrix for the graph in above Graph
+
+        Here to assign the values you will take 4x4 array
+        0000    0001    0010    0011    0100    0101    ....        1111
         ```
         - The vertices are used as headings for both rows and columns. An edge between two vertices is indicated by a 1; the absence of an edge is a 0
-        - Note that the triangular-shaped part of the matrix above the identity diagonal is a mirror image of the part below; both triangles contain the same information. This redundancy may seem inefficient, but there's no convenient way to create a triangular array in most computer languages, so it's simpler to accept the redundancy. Consequently, when you add an edge to the graph, you must make two entries in the adjacency matrix rather than one.
-        - Triangular Array
+        - Note that the triangular-shaped part of the matrix above the identity diagonal is a mirror image of the part below; both triangles contain the same information.
+        - <b>NOTICE IN THE ABOVE MATRIX AB is Refelction BA & AC IS Reflection of CA & so on.. It's the folded image of the array</b>
+        - This redundancy may seem inefficient, but there's no convenient way to create a triangular array in most computer languages, so it's simpler to accept the redundancy
+        - Consequently, when you add an edge to the graph, you must make two entries in the adjacency matrix rather than one.
+        - Triangular Array (just the folding in the middle)
         ```
+        Triangular array
+        -
+        -   -
+        -   -   -
+        -   -   -   -
+
+        You can implement Triangular Array using Java's multidimensional arrays or jagged arrays
                 -
             -   -
         -   -   -
@@ -2987,16 +3010,24 @@ In Java, a Vector class object could be used instead of an array; vectors can be
         That is, the ith row contains only i elements.
         ```
         - 
-    - The Adjacency List
+    - [[[[[ The Adjacency List ]]]]]
         - The list in adjacency list refers to a linked list
         - Actually, an adjacency list is an array of lists (or sometimes a list of lists). Each individual list shows what vertices a given vertex is adjacent to
+        - <b>The adjacency list shows which vertices are adjacent to - that is, one edge away from - a given vertex, not paths from vertex to vertex </b>
         ```
-        A   B->C->D
-        B   A->D
-        C   A
-        D   A->B
+          A B C D
+        A 0 1 1 1
+        B 1 0 0 1
+        C 1 0 0 0
+        D 1 1 0 0
+            ||
+            ||
+            \/
+        A   B->C->D     /** From A - Row BCD set 1 */
+        B   A->D        /** From B - Row AD set 1 */
+        C   A           /** From C - Row A set 1 */
+        D   A->B        /** From D - Row AB set 1 */
         ```
-        - The adjacency list shows which vertices are adjacent to - that is, one edge away from - a given vertex, not paths from vertex to vertex
     - Sometimes adjacency matrix approach is efficient, but sometimes the list approach is more efficient
     - 
 - Adding Vertices and Edges to a Graph
@@ -3327,11 +3358,11 @@ In Java, a Vector class object could be used instead of an array; vectors can be
         - You can easily modify the dfs.java program to start the search on each vertex in turn.
         - For the graph of above Figure the output will look something like
         ```
-        AC
-        BACE
-        C
-        DEC
-        EC
+        A   ->  AC
+        B   ->  BACE
+        C   ->  C
+        D   ->  DEC
+        E   ->  EC
         ```
         - The first letter is the starting vertex and subsequent letters show the vertices that can be reached (either directly or via other vertices) from the starting vertex.
         - 
@@ -3339,8 +3370,11 @@ In Java, a Vector class object could be used instead of an array; vectors can be
     - Warshall's Algorithm
         - In some applications it's important to find out quickly whether one vertex is reachable from another vertex.
         - You could examine the connectivity table, but then you would need to look through all the entries on a given row, which would take O(N) time (where N is the average number of vertices reachable from a given vertex). But you're in a hurry; is there a faster way?
-        - It's possible to construct a table that will tell you instantly (that is, in O(1) time) whether one vertex is reachable from another. Such a table can be obtained by systematically modifying a graph's adjacency matrix. The graph represented by this revised adjacency matrix is called the transitive closure of the original graph.
-        - Remember that in an ordinary adjacency matrix the row number indicates where an edge starts and the column number indicates where it ends. (This is similar to the arrangement in the connectivity table.) A 1 at the intersection of row C and column D means there's an edge from vertex C to vertex D. You can get from one vertex to the other in one step. (Of course, in a directed graph it does not follow that you can go the other way, from D to C.)
+        - It's possible to construct a table that will tell you instantly (that is, in O(1) time) whether one vertex is reachable from another. Such a table can be obtained by systematically modifying a graph's adjacency matrix. The graph represented by this revised adjacency matrix is called the <b>"""transitive closure"""</b> of the original graph.
+        - Remember that in an ordinary adjacency matrix
+            - the row number indicates where an edge starts and the column number indicates where it ends. (This is similar to the arrangement in the connectivity table.) 
+            - IF 1 at the intersection of row C and column D means there's an edge from vertex C to vertex D. (ROW->COLUMN)
+            - You can get from one vertex to the other in one step. (Of course, in a directed graph it does not follow that you can go the other way, from D to C.)
         ```
           A B C D E
         A 0 0 1 0 0
@@ -3380,6 +3414,158 @@ In Java, a Vector class object could be used instead of an array; vectors can be
 - 
 
 ## Weighted Graphs
+- Similiar to graph's - EDGE can have DIRECTION,, ""EDGE"" can also have WEIGHT
+- For example, if vertices in a weighted graph represent cities, the weight of the edges might represent distances between the cities, or costs to fly between them
+- <b>So minimum spanning tree for a weighted graph could be the shortest (or cheapest) distance from one vertex to another</b>
+- Creating such a tree is a bit more complicated with a weighted graph than with an un-weighted one
+- When all edges are the same weight, it's fairly straightforward - as we saw, "Graphs" - for the algorithm to choose one to add to the minimum spanning tree.
+- But when edges can have different weights, some arithmetic is needed to choose the right one.
+- The Graph
+    - <img src="./images/3N_WGRAPH.jpg"></img>
+    - 
+    ```
+    Ajo - A
+    Brodo - B
+    etc.
+    ```
+- The converted minimum spanning tree
+    - <img src="./images/3M_WGRAPH.jpg"></img>
+    - While creating Minimum Spanning Tree These are the Key Pointers
+    ```
+    Once you start from Ajo (A) either you can go to B or D
+    Seems D have less cost = 4
+    Now Once A&D connected
+
+    CAT 1. Towns that have offices and are linked by cable (Till Now A & D)
+    CAT 2. Towns that ARE NOT LINKED YET, but known - the cost to link them to at least one town which is allready linked ["fringe"]
+    CAT 3. Towns you don't know anything about
+
+    Then apply rule  1. Find all the """[EDGES]""" from the """[newest VERTEX]""" to other vertices that aren't in the tree. Put these """[EDGES]""" in the priority queue.
+
+    Doing So we will now connect to A To B
+
+    Now,,
+    A is Connected to D}
+                       } - The Frige vertices will be C & E, We compare their ALL POSSIBLE ""EDGES"" Doing So, we connect B To E
+    A is Connected to B}
+    ```
+- 
+- 
+- The Priority Queue
+    - As we saw in the above we are always selcting the minimum number between the edges to the connecting vertices
+    - A priority queue would be an appropriate data structure, and in fact this turns out to be an efficient way to handle the minimum spanning tree problem. Instead of a list or array, we use a priority queue.
+    - In a serious program this priority queue might be based on a heap. This would speed up operations on large priority queues.
+    - 
+    - Outline of the Algorithm
+        - Start with a vertex, and put it in a new tree.
+        - Then repeat the below 1 & 2:
+        - 1. Find all the """[EDGES]""" from the """[newest VERTEX]""" to other vertices that aren't in the tree. Put these """[EDGES]""" in the priority queue.
+        - 2. Pick the edge with the lowest weight, and add this edge and its destination vertex to the earlier new tree.
+        - 
+        - Repeat these steps until all the vertices are in the tree. At that point, you're done.
+        - In step 1, newest means most recently installed in the last new tree. The edges for this step can be found in the adjacency matrix. After step 1, the list will contain all the edges from vertices in the tree to vertices on the fringe.
+        - 
+        - 
+- The Extraneous Edges (Irrelevant/Creates redundancy/Creates Noise)
+    - In maintaining the list of links,
+        - We went to some trouble to remove links that led to a vertices that had recently become connected. If we didn't do this, we would have ended up installing unnecessary links.
+    - We must make sure that we don't have any edges in the priority queue that lead to vertices that are already in the tree.
+    - We could go through the queue looking for and removing any such edges each time we added a new vertex to the tree.
+    - 
+    - As it turns out, it is easier ""to keep only one edge from the tree to a given [fringe-vertex]"" in the "PRIORITY QUEUE" at any given time. That is, the queue should contain only one edge to each category 2 vertex.
+        - Cat-2 towns are known but not connected
+    - 
+- Looking for Duplicates in the Priority Queue
+    - How do we make sure there is only one edge per category 2 vertex?
+    - Each time we add an edge to the queue, we make sure there's no other edge going to the same destination. If there is, we keep only the one with the smallest weight (By using Priority Queue)
+    - This necessitates looking through the priority queue item by item, to see if there's such a duplicate edge.
+    - Priority queues are not designed for random access, so this is not an efficient activity. However, violating the spirit of the priority queue is necessary in this situation.
+    - 
+- The method that creates the minimum spanning tree for a weighted graph, mstw()
+    - Java program
+    ```
+    public void mstw() {           // minimum spanning tree
+        currentVert = 0;          // start at 0
+        while(nTree < nVerts-1) {   // while not all verts in tree put currentVert in tree
+            vertexList[currentVert].isInTree = true;
+            nTree++;
+            // insert edges adjacent to currentVert into PQ
+            for(int j=0; j<nVerts; j++) {   // for each vertex,
+                if(j==currentVert)         // skip if it's us
+                    continue;
+                if(vertexList[j].isInTree) // skip if in the tree
+                    continue;
+                int distance = adjMat[currentVert][j];
+                if( distance == INFINITY)  // skip if no edge
+                    continue;
+                putInPQ(j, distance);      // put it in PQ (maybe)
+            }
+            if(thePQ.size()==0) {           // no vertices in PQ?
+                System.out.println(" GRAPH NOT CONNECTED");
+                return;
+            }
+            // remove edge with minimum distance, from PQ
+            Edge theEdge = thePQ.removeMin();
+            int sourceVert = theEdge.srcVert;
+            currentVert = theEdge.destVert;
+            
+            // display edge from source to current
+            System.out.print( vertexList[sourceVert].label );
+            System.out.print( vertexList[currentVert].label );
+            System.out.print(" ");
+        }  // end while(not all verts in tree)
+        
+        // mst is complete
+        for(int j=0; j<nVerts; j++)     // unmark vertices
+            vertexList[j].isInTree = false;
+        }
+    ```
+    - Within loop the following activities take place:
+        - 1. The current vertex is placed in the tree.
+        - 2. The EDGES adjacent to this vertex are placed in the priority queue (IF appropriate).
+        - 3. The edge with the minimum weight is removed from the priority queue. The destination vertex of this edge becomes the current vertex. i.e. it become Cat-1 vertex & now we will go for cat-2 vertex & so on...
+        - 
+    - Let's look at these steps in more detail. In step 1, the currentVert is placed in the tree by marking its isInTree field.
+        - In step 2, the edges adjacent to this vertex are considered for insertion in the priority queue. The edges are examined by scanning across the row whose number is currentVert in the adjacency matrix. An edge is placed in the queue unless one of these conditions is true:
+            - A. The source and destination vertices are the same.
+            - B. The destination vertex is in the tree.
+            - C. There is no edge to this destination.
+        - If NONE OF THESE CONDITIONS (A,B,C) are true, the putInPQ() method is called to put the edge in the priority queue. Actually, this routine doesn't always put the edge in the queue either, as we'll see in a moment.
+        - 
+        - 
+        - At the end of mstw(), the vertices are removed from the tree by resetting their isInTree variables. That isn't strictly necessary in this program because only one tree is created from the data. However, it's good housekeeping to restore the data to its original form when you finish with it.
+        - 
+        - As we noted, the priority queue should contain only one edge with a given destination vertex. The putInPQ() method makes sure this is true. It calls the find() method of the PriorityQ class, which has been doctored to find the edge with a specified destination vertex. If there is no such vertex, and find() therefore returns -1, then putInPQ() simply inserts the edge into the priority queue. However, if such an edge does exist, putInPQ() checks to see whether the existing edge or the new proposed edge has the lower weight. If it's the old edge, no change is necessary. If the new one has a lower weight, the old edge is removed from the queue and the new one is installed. Here's the code for putInPQ()
+        ```
+        public void putInPQ(int newVert, int newDist) { // is there another edge with the same destination vertex?
+            int queueIndex = thePQ.find(newVert);  // got edge's index
+            if(queueIndex != -1) {              // if there is one, get edge
+                Edge tempEdge = thePQ.peekN(queueIndex);
+                int oldDist = tempEdge.distance;
+                if(oldDist > newDist) {          // if new edge shorter,
+                    thePQ.removeN(queueIndex);  // remove old edge
+                    Edge theEdge = new Edge(currentVert, newVert, newDist);
+                    thePQ.insert(theEdge);      // insert new edge
+                }
+                // else no action; just leave the old vertex there
+            } else {  // no edge with same destination vertex so insert new one
+                Edge theEdge = new Edge(currentVert, newVert, newDist);
+                thePQ.insert(theEdge);
+            }
+        }
+        ```
+
+### The Shortest-Path Problem
+- The most commonly encountered problem associated with weighted graphs is that of finding the shortest path between two given vertices.
+- For Example: In a Google-Map navigating from one location to another location
+- I.e. trying to find the cheapest route from one city to another
+    <img src="./images/3O_WGRAPH.jpg"></img>
+- The edges in Figure are directed. They represent single-track railroad lines, on which (in the interest of safety) travel is permitted in only one direction. For example, you can go directly from Ajo to Bordo, but not from Bordo to Ajo.
+- There are several possible routes between any two towns.
+- For example, to take the train from Ajo to Erizo, you could go through Danza, or you could go through Bordo and Colina, or through Danza and Colina, or you could take several other routes.
+- Actually the shortest path is through Danza and Colina; it will cost you $140 (ADCE 80+20+40)
+
+#### A Directed, Weighted Graph
 - 
 
 
@@ -3396,11 +3582,10 @@ In Java, a Vector class object could be used instead of an array; vectors can be
 
 
 
-
-
-
-
-
+# ######################
+- 
+- 
+- 
 ## Perfrmance
 - Too many method call add lil overhead
 - heap - special kind of tree
@@ -3408,7 +3593,7 @@ In Java, a Vector class object could be used instead of an array; vectors can be
 - Graphs, we'll apply it to searching the vertices of a graph
 - Theoretically, an ADT stack doesn't become full
 
-# Algorith books
+# Algorithm books
 - Sedgewick
 
 
