@@ -127,4 +127,46 @@ $ mvn org.apache.tomcat.maven:tomcat7-maven-plugin:2.2:run
 ```
 
 
+## Working With Hibernate
+
+```
+Add hibernate & related dependencies in pom.xml
+
+    hibernate-core
+    javax.persistence-api (Now Jakarta)
+    mysql-connector-java
+
+
+Create DB & Add Details To hibernate.cfg.xml
+    CREATE DATABASE subrat;
+    CREATE DATABASE hibernate_demo CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+    hbm2ddl.auto will create tables within an existing database
+
+    src/main/resources/hibernate.cfg.xml
+        Tells Hibernate how to connect to the database
+        Which dialect to use
+        Which entity classes it should manage
+
+
+
+
+Create an entity
+    src/main/java/com/palhar/hibernatemaster/entity/User.java
+
+Work With Hibernate
+    Create a Hibernate Utility Class
+    src/main/java/com/palhar/hibernatemaster/util/HibernateUtil.java
+
+Create a Simple Servlet to Interact with Hibernate
+    src/main/java/com/palhar/hibernatemaster/servlet/UserServlet.java
+
+    HERE WE DID WITH HQL - HIBERNATE QUERY LANGUAGE
+
+Now Run !!
+```
+---
+---
+
+
 
