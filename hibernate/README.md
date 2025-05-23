@@ -168,5 +168,27 @@ Now Run !!
 ---
 ---
 
+```
+Implement DAO
 
+DAO Being an Abstraction here
+A DAO (Data Access Object) is used to separate ""data persistence-logic"" from the ""business logic""
+
+    It gives method such as saveUser(), getUserByID() etc.
+
+
+Create An User DAO
+    Create src/main/java/com/palhar/hibernatemaster/dao/UserDao.java
+
+Create UserServlet
+    src/main/java/com/palhar/hibernatemaster/servlet/UserServletDao.java
+
+
+```
+
+
+## Other Things TO DO
+```
+ByteBuddy is a bytecode manipulation library used internally by Hibernate (among others) for things like proxy creation.
+```
 
