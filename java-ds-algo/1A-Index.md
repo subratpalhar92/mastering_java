@@ -79,11 +79,15 @@ R-tree: multi-dimension search, such as finding the nearest neighbor
                               Object
                             /       \
                         Arrays  Collections
-                                        |
-                                    Collection
-                                    /   |  \
-                                List  Queue Set
 
+
+
+
+                            Iterable
+                                |
+                            Collection
+                            /   |  \
+                        List  Queue Set
 
 
 List -- ArrayList, LinkedList (LinkedList can do basic queue tasks through peek, pool, offer)
@@ -91,7 +95,6 @@ Queue -- PriorityQueue, ArrayDequeue (ArrayDequeue also implements Deque interfa
 Set -- HashSet, LinkedHashSet, TreeSet (Similiar structure to Map)
 
 List provides - Vector: just synchronized version
-
                     
                                  Map
                                 /   \
@@ -3565,7 +3568,7 @@ In Java, a Vector class object could be used instead of an array; vectors can be
 - For example, to take the train from Ajo to Erizo, you could go through Danza, or you could go through Bordo and Colina, or through Danza and Colina, or you could take several other routes.
 - Actually the shortest path is through Danza and Colina; it will cost you $140 (ADCE 80+20+40)
 
-#### A Directed, Weighted Graph
+#### A Directed, Weighted Graph [Weight + Direction]
 - 
 
 
