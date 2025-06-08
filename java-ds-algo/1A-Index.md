@@ -70,7 +70,7 @@ R-tree: multi-dimension search, such as finding the nearest neighbor
 - What is an Algorithm ?
     - How fast we process the "structured data" !!
     - A CRUD operation
-    - Create/insert     Retrive/Search      Update      Delete
+    - Create/insert     Retrive|Search      Update      Delete
 
 
 
@@ -604,7 +604,7 @@ tri(n) = n + tri(n-1)      if n > 1
 - 5*4*3*2*1
 - The factorial of 0 is defined to be 1.
 - if(n==0) return 1;
-- arious other numerological entities lend themselves to calculation using recursion in a similar way, such as finding the greatest common denominator of two numbers (which is used to reduce a fraction to lowest terms), raising a number to a power, and so on.
+- various other numerological entities lend themselves to calculation using recursion in a similar way, such as finding the greatest common denominator of two numbers (which is used to reduce a fraction to lowest terms), raising a number to a power, and so on.
 - Again, while these calculations are interesting for demonstrating recursion, they probably wouldn't be used in practice because a loop-based approach is more efficient.
 ### Anagrams
 - A permutation is an arrangement of things in a definite order
@@ -729,7 +729,7 @@ Return (3 disks)
 - If you have a array of size 8 devide it 4A - 4B
     - For 4A devide it to 2AA & 2AA & while devide insrt it in order    => 4AA
     - Do the same Process for 4B - 2BB & 2BB                            => 4BB
-    - Then comapre the 0th idx from 4AA & oth idx from 4BB & merge them into a destination arrray 4DD
+    - Then comapre the 0th idx from 2AA & oth idx from 2BB & merge them into a destination arrray 4DD
 - Speed/Time mergesort is O(N*logN)
 
 - There are 24 copies necessary to sort 8 items [2+2+4] & [2+2+4] & merging them => + 8 = 24
