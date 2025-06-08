@@ -10,12 +10,16 @@ public class MyTreeSet {
         ts.add(4);
         ts.add(5);
 
-        int sum = 0;
+        int sum1 = 0;
         for (Integer i : ts) {
-            sum += i;
+            sum1 += i;
         }
 
-        System.out.println(sum);
+        System.out.println(sum1);
+
+
+        int sum2 = ts.stream().mapToInt(Integer::intValue).sum();
+        System.out.println(sum2);
     }
 
 }
