@@ -121,6 +121,16 @@ Map provides - HashTable: just synchronized version
 - Heap : Fast insertion, deletion, access to largest item : But Slow access to other item
 - Graph: Some algo are slow & complex
 
+- GOOD DS SELECTION
+```
+Size of data
+In memory or secondary memory required
+If it is ordered or sorted
+Space Time Complexity - how much space it requires & how much time it requires
+Id Duplicate allowed
+Search heavy or delete heavy or insert heavy operation is anticipated
+If null anticipated
+```
 
 ## Array DS
 - For "A" Searching takes an average of N/2 steps
