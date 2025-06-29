@@ -16,6 +16,8 @@ public class MyStringOp {
         System.out.println(count);
 
 
+        // Map<String, Long> cnt =  Arrays.stream(sArr).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
 
         /** Using Nested For Loop */
         // chaAt[0] == charAt[1] => 2
