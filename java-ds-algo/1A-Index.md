@@ -129,7 +129,10 @@ If it is ordered or sorted
 Space Time Complexity - how much space it requires & how much time it requires
 Id Duplicate allowed
 Search heavy or delete heavy or insert heavy operation is anticipated
+Behaviour of delete, search & insert
 If null anticipated
+Is amount of data can be predicated in advance
+Wheather ordered incomming data is expecting [#Tree]
 ```
 
 ## Array DS
@@ -150,7 +153,7 @@ If null anticipated
 
 - OOP -&- DS
 
-- Also think of scinario, when you query a idx from one thread & deleted another element from another thread !! how bad that would be !!
+- Also think of scinario, when you query a idx from one thread & delete the element from another thread !! how bad that would be !!
 
 - Binary search in an ordered collection
 
@@ -229,7 +232,7 @@ Deletion in ordered array O(N) time
 O(1) is excellent
 O(log N) is good
 O(N) is fair
-O(N2) is poor (Bubble sort)
+O(N^2) is poor (Bubble sort)
 ```
 
 <img src="./images/1-big-o.jpg" alt="Big-o-graph">
@@ -937,7 +940,7 @@ N5/4            Shellsort           18              316             5,600       
 N7/6            Shellsort           14              215             3,200           46,000
 N*logN          Quicksort, etc.     10              200             3,000           40,000
 
-- For most data, the higher estimates, such as N3/2, are probably more realistic.
+- For most data, the higher estimates, such as (N^3)/2, are probably more realistic.
 
 ```
 -  ...........................
@@ -2381,7 +2384,7 @@ If P is red, there are two possibilities:
         - 
         - 
 #### Separate Chaining
-- A different approach is to install a linked list at each index in the hash table. A data item’s key is hashed to the index in the usual way, and the item is inserted into the linked list at that index. Other items that hash to the same index are simply added to the linked list; there’s no need to search for empty cells in the primary array
+- A different approach is to install a linked list at each index in the hash table. A data item's key is hashed to the index in the usual way, and the item is inserted into the linked list at that index. Other items that hash to the same index are simply added to the linked list; there's no need to search for empty cells in the primary array
 - Load Factors
     - In separate chaining it's normal to put N or more items into an N cell array; thus, the load factor can be 1 or greater.
     - Finding the initial cell takes fast O(1) time, but searching through a list takes time proportional to M, the average number of items on the list. This is O(M) time. Thus, we don't want the lists to become too full.
@@ -2500,7 +2503,7 @@ If P is red, there are two possibilities:
     - 
     - For example, suppose you want to hash nine-digit Social Security numbers for linear probing. If the array size is 1,000, you would divide the nine-digit number into three groups of three digits. If a particular SSN was 123-45-6789, you would calculate a key value of 123+456+789 = 1368. You can use the % operator to trim such sums so the highest index is 999. In this case, 1368%1000 = 368. If the array size is 100, you would need to break the nine-digit key into four two-digit numbers and one one-digit number: 12+34+56+78+9 = 189, and 189%100 = 89
     - 
-    - It's easier to imagine how this works when the array size is a multiple of 10. However, for best results it should be a prime number, as we’ve seen for other hash functions.
+    - It's easier to imagine how this works when the array size is a multiple of 10. However, for best results it should be a prime number, as we've seen for other hash functions.
     - 
 ### Hashing Efficiency
 - We've noted that insertion and searching in hash tables can approach O(1) time. If no collision occurs, only a call to the hash function and a single array reference are necessary to insert a new item or find an existing item. This is the minimum access time.
@@ -3218,7 +3221,7 @@ In Java, a Vector class object could be used instead of an array; vectors can be
     - The result would be a graph with the minimum number of edges necessary to connect the vertices.
     - For example, In below Figure a shows five vertices with an excessive number of edges, while Figure b shows the same vertices with the minimum number of edges necessary to connect them. This constitutes a minimum spanning tree (MST).
     <img src="./images/3G_GRAPHS.jpg"></img>
-    - Remember that we’re not worried here about the length of the edges. We're not trying to find a minimum physical length, just the minimum number of edges.
+    - Remember that we're not worried here about the length of the edges. We're not trying to find a minimum physical length, just the minimum number of edges.
     - There are many possible minimum spanning trees for a given set of vertices. Figure 13.10b shows edges AB, BC, CD, and DE, but edges AC, CE, ED, and DB would do just as well.
     - The arithmetically inclined will note that the number of edges E in a minimum spanning tree is always one less than the number of vertices V:
     ```
@@ -3580,14 +3583,145 @@ In Java, a Vector class object could be used instead of an array; vectors can be
 
 #### A Directed, Weighted Graph [Weight + Direction]
 - 
+- 
+- 
+- 
+- 
+- 
 
 
+## When To Use What
+- General-purpose data structures: arrays, linked lists, trees, hash tables
+- Specialized data structures: stacks, queues, priority queues, graphs
+- Sorting: insertion sort, Shellsort, quicksort, mergesort, heapsort
+- Graphs: adjacency matrix, adjacency list
+- External storage: sequential storage, indexed files, B-trees, hashing
+- 
+- 
 
+### General Purpose Data Structures
+- The general-purpose data structures can be roughly arranged in terms of speed:
+- Arrays and linked lists are slow, trees are fairly fast, and hash tables are very fast.
+- 
+- <img src="./images/9w-when-to-use-what.png"></img>
+- 
+- don't draw the conclusion from that it's always best to use the fastest structures.
+- There's a penalty for using them. First, they are - in varying degrees - more complex to program than the array and linked list.
+- Also, hash tables require you to know in advance about how much data can be stored, and they don't use memory very efficiently.
+- Ordinary binary trees will revert to slow O(N) operation for ordered data, and balanced trees, which avoid this problem, are difficult to program.
+- 
+- Processor Speed
+- Moore's Law (postulated by Gordon Moore in 1965) specifies that CPU performance will double every 18 months.
+- This adds up to an astonishing difference in performance between the earliest computers and those available today, and there's no reason to think this increase will slow down any time soon.
+- Suppose a computer a few years ago handled an array of 100 objects in acceptable time.
+- Now, computers are much faster, so an array with 10,000 objects might run at the same speed.
+- Many writers provide estimates of the maximum size you can make a data structure before it becomes too slow.
+- Don't trust these estimates (including those in this book). Today's estimate doesn't apply to tomorrow.
+- Instead, start by considering the simple data structures.
+- Unless it's obvious they'll be too slow, code a simple version of an array or linked list and see what happens.
+- If it runs in acceptable time, look no further
+- Even if you must deal with thousands or tens of thousands of items,
+- It's still worthwhile to see how well an array or linked list will handle them.
+- Only when experimentation shows their performance to be too slow should you revert to more sophisticated data structures.
+- 
 
+```
+When Using a commercial library, using a complex structure such as a balanced tree, or a delicate algorithm such as quicksort, becomes a more attractive possibility.
+However, you must ensure that the class can be adapted to your particular situation.
+```
+- 
+```
+Java has an advantage over some languages in the speed with which objects can be manipulated, because,
+in most data structures, Java stores only references, not actual objects.
+Therefore, most algorithms will run faster than in languages where actual objects occupy space in a data structure.
+In analyzing the algorithms, it's not the case, as when objects themselves are stored, that the time to "move" an object depends on the size of the object.
+Because only a reference is moved, it doesn't matter how large the object is.
 
+C++, pointers to objects can be stored instead of the objects themselves;
+this has the same effect as using references, but the syntax is more complicated.
+C++ includes the Standard Template Library (STL), which contains
+classes for many data structures and algorithms.
+```
+- Arrays (Ordered & Unordered)
+    - Arrays are useful when The amount of data is reasonably small & The amount of data is predictable in advance
+    - 
+    - Insertion in an unordered array is assumed to be at the end of the array. 
+    - If insertion speed is important, use an unordered array.
+    - If search speed is important, use an ordered array with a binary search.
+    - Deletion is always slow in arrays because an average of half the items must be moved to fill in the newly vacated cell.
+    - Traversal is fast in an ordered array but not supported in an unordered array.
+    - 
+- Vectors
+    - Vectors, such as the Vector class supplied with Java, are arrays that expand themselves when they become too full.
+    - Vectors may work when the amount of data isn't known in advance.
+    - However, there may periodically be a significant pause while they enlarge themselves by copying the old data into the new space.
+    - 
+- Linked Lists
+    - whenever the amount of data to be stored cannot be predicted in advance
+    - or when data will frequently be inserted and deleted.
+    - The linked list obtains whatever storage it needs as new items are added, so it can expand to fill all of available memory;
+    - and there is no need to fill "holes" during deletion, as there is in arrays
+    - 
+    - Insertion is fast in an unordered list. Searching and deletion are slow (although deletion is faster than in an array), so, like arrays, linked lists are best used when the amount of data is comparatively small.
+    - 
+    - 
+- Binary Search Trees
+    - A binary tree is the first structure to consider when arrays and linked lists prove too slow.
+    - A tree provides fast O(logN) insertion, searching, and deletion
+    - 
+    - An unbalanced binary tree is much easier to program than a balanced tree,
+    - but unfortunately ordered data can reduce its performance to O(N) time, no better than a linked list.
+    - However, if you're sure the data will arrive in random order, there's no point using a balanced tree.
+    - 
+    - 
+    - The red-black trees & 2-3-4 trees.
+    - They are both balanced trees, and thus guarantee O(logN) performance whether the input data is ordered or not.
+    - However, these balanced trees are challenging to program, with the red-black tree being the more difficult.
+    - They also impose additional memory overhead, which may or may not be significant.
+    - 
+    - In some cases a hash table may be a better choice than a balanced tree. Hash-table performance doesn't degrade when the data is ordered.
+    - 
+    - There are other kinds of balanced trees, including AVL trees, splay trees, 2-3 trees, and so on, but they are not as commonly used as the red-black tree.
+    - 
+    - 
+- Hash Tables
+    - Hash tables are the fastest data storage structure. This makes them a necessity for situations in which a computer program, rather than a human, is interacting with the data. Hash tables are typically used in spelling checkers and as symbol tables in computer language compilers, where a program must check thousands of words or symbols in a fraction of a second.
+    - Hash tables may also be useful when a person, as opposed to a computer, initiates data-access operations. As noted earlier, hash tables are not sensitive to the order in which data is inserted, and so can take the place of a balanced tree.
+    - Programming is much simpler than for balanced trees.
+    - Hash tables require additional memory, especially for open addressing. Also, the amount of data to be stored must be known fairly accurately in advance, because an array is used as the underlying structure.
+    - A hash table with separate chaining is the most robust implementation, unless the amount of data is known accurately in advance, in which case open addressing offers simpler programming because no linked list class is required.
+    - Hash tables don't support any kind of ordered traversal, or access to the minimum or maximum items. If these capabilities are important, the binary search tree is a better choice.
+    - 
+    - 
+    - 
+- A comparision
+    - <img src="./images/9x-when-to-use-what.png"></img>
+    - 
+    - 
+    - 
 
-
-
+### Special-Purpose Data Structures
+- The stacks, queues & priority queues are all used in graph algorithms.
+- Stacks, queues, and priority queues are Abstract Data Types (ADTs) that are implemented by a more fundamental structure
+- such as an array, linked list, or (in the case of the priority queue) a heap.
+- These ADTs present a simple interface to the user, typically allowing only insertion and the ability to access or delete only one data item.
+- These ADTs can be seen as conceptual aids. Their functionality could be obtained using the underlying structure (such as an array) directly, but the reduced interface they offer simplifies many problems.
+- These ADTs can't be conveniently searched for an item by key value or traversed.
+- These items are
+    - For stacks: the last item inserted
+    - For queues: the first item inserted
+    - For priority queues: the item with the highest priority
+- Stack
+    - A stack is used when you want access "only to the last data item inserted"
+    - A stack is often implemented as an array or a linked list. The array implementation is efficient because the most recently inserted item is placed at the end of the array, where it's also easy to delete.
+    - Stack overflow can occur, but is not likely if the array is reasonably sized, because stacks seldom contain huge amounts of data.
+    - 
+    - If the stack will contain a lot of data and the amount can't be predicted accurately in advance (as when recursion is implemented as a stack), a linked list is a better choice than an array.
+    - A linked list is efficient because items can be inserted and deleted quickly from the head of the list. Stack overflow can't occur (unless the entire memory is full).
+    - A linked list is slightly slower than an array because memory allocation is necessary to create a new link for insertion, and deallocation of the link is necessary at some point following removal of an item from the list.
+    - 
+- Queue
+    - 
 
 
 
