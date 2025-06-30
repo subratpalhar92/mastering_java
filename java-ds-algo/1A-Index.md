@@ -3721,9 +3721,49 @@ classes for many data structures and algorithms.
     - A linked list is slightly slower than an array because memory allocation is necessary to create a new link for insertion, and deallocation of the link is necessary at some point following removal of an item from the list.
     - 
 - Queue
+    - A queue is used when you want access only to the first data item inserted
+    - Like stacks, queues can be implemented as arrays or linked lists. Both are efficient. The array requires additional programming to handle the situation in which the queue wraps around at the end of the array.
+    - A linked list must be double-ended, to allow insertions at one end and deletions at the other.
+    - 
+- Priority Queue
+    - A priority queue is used when the only access desired is to the data item with the highest priority. This is the item with the largest (or sometimes the smallest) key.
+    - Priority queues can be implemented as an ordered array or as a heap.
+    - Insertion into an ordered array is slow, but deletion is fast. With the heap implementation, both insertion and deletion take O(logN) time.
+    - Use an array or a double-ended linked list if insertion speed is not a problem.
+    - The array works when the amount of data to be stored can be predicted in advance; the linked list when the amount of data is unknown.
+    - If speed is important, a heap is a better choice.
+
+- A comparision of Special-Purpose Data Structures
+    - <img src="./images/9y-when-to-use-what.png"></img>
+    - 
     - 
 
-
+### Sorting
+- As with the choice of data structures, it's worthwhile initially to try a slow but simple sort, such as the insertion sort.
+- It may be that the fast processing speeds available in modern computers will allow sorting of your data in reasonable time.
+- (As a wild guess, the slow sort might be appropriate for fewer than 1,000 items.)
+- 
+- Insertion sort is also good for almost-sorted files, operating in about O(N) time if not too many items are out of place.
+- This is typically the case where a few new items are added to an already-sorted file.
+- 
+- If the insertion sort proves too slow, then the Shellsort is the next candidate. It's fairly easy to implement, and not very temperamental.
+- Sedgewick estimates it to be useful up to 5,000 items.
+- 
+- Only when the Shellsort proves too slow should you use one of the more complex but faster sorts: mergesort, heapsort, or quicksort.
+- Mergesort requires extra memory, heapsort requires a heap data structure, and both are somewhat slower than quicksort, so quicksort is the usual choice when the fastest sorting time is necessary.
+- However, quicksort is suspect if there's a danger that the data may not be random, in which case it may deteriorate to O(N^2) performance
+- For potentially non-random data, heapsort is better.
+- Quicksort is also prone to subtle errors if it is not implemented correctly.
+- Small mistakes in coding can make it work poorly for certain arrangements of data, a situation that may be hard to diagnose.
+- 
+- <img src="./images/9z-when-to-use-what.png"></img>
+- 
+- 
+- 
+### Graphs
+- 
+- 
+- 
 
 
 
