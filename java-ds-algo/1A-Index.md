@@ -94,8 +94,8 @@ List -- ArrayList, LinkedList (LinkedList can do basic queue tasks through peek,
 Queue -- PriorityQueue, ArrayDequeue (ArrayDequeue also implements Deque interface)
 Set -- HashSet, LinkedHashSet, TreeSet (Similiar structure to Map)
 
-List provides - Vector: just synchronized version
-                    
+List provides - Vector: just synchronized version - a dynamic array that resize themselves
+
                                  Map
                                 /   \
                         HashMap     SortedMap
@@ -121,19 +121,19 @@ Map provides - HashTable: just synchronized version
 - Heap : Fast insertion, deletion, access to largest item : But Slow access to other item
 - Graph: Some algo are slow & complex
 
-- GOOD DS SELECTION
-```
-Size of data
-In memory or secondary memory required
-If it is ordered or sorted
-Space Time Complexity - how much space it requires & how much time it requires
-Id Duplicate allowed
-Search heavy or delete heavy or insert heavy operation is anticipated
-Behaviour of delete, search & insert
-If null anticipated
-Is amount of data can be predicated in advance
-Wheather ordered incomming data is expecting [#Tree]
-```
+- Good DATA STRUCTURE Selection
+    ```
+    Size of data
+    In memory or secondary memory required
+    If it is ordered or sorted
+    Space Time Complexity - how much space it requires & how much time it requires
+    Is Duplicate allowed
+    Search heavy or delete heavy or insert heavy operation is anticipated
+    Behaviour of delete, search & insert
+    If null anticipated
+    Is amount of data can be predicated in advance
+    Wheather ordered incomming data is expecting [#Tree]
+    ```
 
 ## Array DS
 - For "A" Searching takes an average of N/2 steps
@@ -170,7 +170,7 @@ For 128 numbers it devides like - 128 64 32 16 8 4 2 1 which ranges from 2^7 .. 
 which is a function of - 2
     so for 128 the equation is 2^7
 Or in the reverse way
-    the equarion is log-base2-(128) = 6.sth = 7
+    the equation is log-base2-(128) = 6.sth = 7
 
 ________________________________________________________,
 log-base(a)of(b) = log-base(c)of(b) / log-base(c)of(a)  |
@@ -326,7 +326,7 @@ once done this
 ```
 (N-1) + (N-2) + (N-3) + ... + 1 = N*(N-1)/2
 N*(N-1)/2
-N2/2 comparisons
+(N^2)/2 comparisons
 ```
 - There are fewer swaps than there are comparisons because two numbers are swapped only if they need to be
 - If the data is random, a swap is necessary about half the time, so there will be about N^2/4
@@ -335,9 +335,9 @@ N2/2 comparisons
 - The outer loop executes N times, and the inner loop executes N => N*N = N^2
 
 ### Selection Sort
-- The selection sort improves on the bubble sort by reducing the number of swaps necessary from O(N2) to O(N). Unfortunately, the number of comparisons remains O(N2). However, the selection sort can still offer a significant improvement for large records that must be physically moved around in memory
+- The selection sort improves on the bubble sort by reducing the number of swaps necessary from O(N^2) to O(N). Unfortunately, the number of comparisons remains O(N^2). However, the selection sort can still offer a significant improvement for large records that must be physically moved around in memory (The actual Object not just the Reference)
 
-- The Shrtest will be remembered & moves to the extreme left (Not 2 at a time will be compared)
+- The Shortest will be remembered & moves to the extreme left (Not 2 at a time will be compared)
 ```
 public void selectionSort() {
     int out, in, min;
@@ -3670,7 +3670,7 @@ classes for many data structures and algorithms.
     - A tree provides fast O(logN) insertion, searching, and deletion
     - 
     - An unbalanced binary tree is much easier to program than a balanced tree,
-    - but unfortunately ordered data can reduce its performance to O(N) time, no better than a linked list.
+    - But unfortunately ordered data can reduce its performance to O(N) time, no better than a linked list.
     - However, if you're sure the data will arrive in random order, there's no point using a balanced tree.
     - 
     - 
@@ -3761,6 +3761,55 @@ classes for many data structures and algorithms.
 - 
 - 
 ### Graphs
+- They directly model real-world situations.
+- The structure of the graph reflects the structure of the problem.
+- 
+- The primary choice is how to represent the graph: using an adjacency matrix or adjacency lists.
+- Your choice depends on whether the graph is full, when the adjacency matrix is preferred, or sparse, when the adjacency list should be used.
+- 
+- 
+- The depth-first search and breadth-first search run in O(V^2) time, where V is the number of vertices, for adjacency matrix representation. They run in O(V+E) time, where E is the number of edges, for adjacency list representation.
+- Minimum spanning trees and shortest paths run in O(V^2) time using an adjacency matrix and O((E+V)logV) time using adjacency lists.
+- You'll need to estimate V and E for your graph and do the arithmetic to see which representation is appropriate.
+- 
+- 
+### External Storage
+- Data is stored in a disk file in fixed-size units called blocks, each of which holds a number of records(a file on disk)
+- Keep atention the number of disk accesses must be minimized
+    #### Sequential Storage
+    - Speed is increased dramatically taking O(1) time
+    - In this scheme an index of keys and corresponding block numbers is kept in main memory.
+    - Map Of [index number -> block numbers]
+    - 
+    - disadvantage of indexed files is that at some point the index must be created. This probably involves reading through the file sequentially, so creating the index is slow.
+    - Also, the index will need to be updated when items are added to the file
+    - 
+    #### B-trees
+    - B-trees are multiway trees, commonly used in external storage, in which nodes correspond to blocks on the disk.
+    - As in other trees, the algorithms find their way down the tree, reading one block at each level. B-trees provide searching, insertion, and deletion of records in O(logN) time.
+    - This is quite fast and works even for very large files. However, the programming is not trivial.
+    - 
+    #### Hashing
+    - If it's acceptable to use about twice as much external storage as a file would normally take, then external hashing might be a good choice.
+    - It has the same access time as indexed files, O(1), but can handle larger files.
+    - 
+    - 
+    - 
+    - <img src="./images/9v-when-to-use-what.png"></img>
+    - 
+    - 
+
+
+### Virtual Memory
+- Sometimes you can let your operating system's virtual memory capabilities (if it has them) solve disk access problems with little programming effort on your part.
+- If you read a file that's too big to fit in main memory, the virtual memory system will read in that part of the file that fits and store the rest on the disk. As you access different parts of the file, they will be read from the disk automatically and placed in memory.
+- Of course, operation will be much slower than when the entire file is in memory, but this would also be true if you dealt with the file block by block using one of the external-storage algorithms. It may be worth simply ignoring the fact that a file doesn't fit in memory and seeing how well your algorithms work with the help of virtual memory. Especially for files that aren't much larger than the available memory, this may be an easy solution.
+- 
+- 
+- 
+- 
+- 
+- 
 - 
 - 
 - 
