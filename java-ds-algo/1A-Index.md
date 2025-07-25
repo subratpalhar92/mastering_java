@@ -3429,7 +3429,7 @@ In Java, a Vector class object could be used instead of an array; vectors can be
 - 
 - 
 
-## Weighted Graphs
+### Weighted Graphs (Non Directed) [Weight Only]
 - Similiar to graph's - EDGE can have DIRECTION,, ""EDGE"" can also have WEIGHT
 - For example, if vertices in a weighted graph represent cities, the weight of the edges might represent distances between the cities, or costs to fly between them
 - <b>So minimum spanning tree for a weighted graph could be the shortest (or cheapest) distance from one vertex to another</b>
@@ -3571,7 +3571,16 @@ In Java, a Vector class object could be used instead of an array; vectors can be
         }
         ```
 
-### The Shortest-Path Problem
+### Weighted Directed Graph (Directed) [Weight + Direction]
+- If there is a railroad has only single-track lines,
+- So you can go in only one direction between any two cities :: This corresponds to a -- ""directed graph""
+- 
+- When you can go either way between two cities for the same price :: This correspond to a -- ""non-directed graph""
+- 
+- For variety we'll show how it looks in a directed graph
+- 
+
+#### The Shortest-Path Problem
 - The most commonly encountered problem associated with weighted graphs is that of finding the shortest path between two given vertices.
 - For Example: In a Google-Map navigating from one location to another location
 - I.e. trying to find the cheapest route from one city to another
@@ -3580,14 +3589,154 @@ In Java, a Vector class object could be used instead of an array; vectors can be
 - There are several possible routes between any two towns.
 - For example, to take the train from Ajo to Erizo, you could go through Danza, or you could go through Bordo and Colina, or through Danza and Colina, or you could take several other routes.
 - Actually the shortest path is through Danza and Colina; it will cost you $140 (ADCE 80+20+40)
+- 
+- 
+### Dijkstra's Algorithm
+- It is based on the ""adjacency matrix representation of a graph""
+- It not only finds the shortest path from one specified vertex to another,
+- But also finds the shortest paths from the specified vertex to all the other vertices
+- 
+- The algorithm, however, must look at one piece of information at a time without seeing the bigger picture
+- 
+- 
+```
+RULE :
+Always send an agent to the town whose overall fare from the starting point (Ajo) is the cheapest
+```
+- Three Kinds of Towns
+    - 1. Towns in which we've installed an agent; they're in the tree.
+    - 2. Towns with known fares from towns with an agent; they're on the fringe.
+    - 3. Unknown towns.
 
-#### A Directed, Weighted Graph [Weight + Direction]
+- Eventually, you're going to place an agent in every town; this agent's job is to obtain information about ticket costs to other towns. You yourself are the agent in Ajo.
+    - stationmaster in Ajo can tell you is that it will cost $50 to ride to Bordo and $80 to ride to Danza
+    ```
+    From Ajo    -->     Bordo           Colina   Danza           Erizo
+    Step 1              50 (via Ajo)    inf      80 (via Ajo)    inf
+
+
+
+    The entry "inf" is short for "infinity" & means that you can't get from Ajo to the town shown in the column head, or at least that you don't yet know how to get there
+
+    (Here In the algorithm infinity will be represented by a very large number, which will help with calculations)
+    As we have RULE : Always send an AGENT to the town whose overall fare from the starting point (Ajo) is the cheapest
+    ```
+
+
+
+    ```
+    From Ajo    -->     Bordo           Colina          Danza           Erizo
+    Step 1              50 (via Ajo)    inf             80 (via Ajo)    inf
+    Step 2              50 (via Ajo)*   110 (via Bordo) 80 (via Ajo)    inf
+
+    We sure the route taken by the agent from Ajo-Brodo town is the cheapest route
+    From this we decide that from now on we won't need to update the entry for the cheapest fare from Ajo to Bordo
+    This fare will not change, no matter what we find out about other towns
+    We'll put a * next to it to show that there's an agent in the town & that the cheapest fare to it is fixed
+
+
+    Category 1 towns form a tree consisting of paths that all begin at the starting vertex
+    and that each end on a different destination vertex
+    (This is not the same tree, of course, as a minimum spanning tree.)
+    ```
+
+
+    ```
+    Now from starting point AJO
+    Cheapest route you know that goes from Ajo to any town without an agent is $80
+            Ajo-Bordo-Colina route @ $110
+            Ajo-Bordo-Danza route @ $140
+    So, the Third Agent: In Danza
+
+    The Danza agent reports that from Danza it's $20 to Colina and $70 to Erizo
+
+    Now you can modify your entry for Colina
+        As, from Ajo-Bordo-Colina @$110
+        Whereas, Ajo-Danza-Colina @100
+
+
+    From Ajo    -->     Bordo           Colina          Danza           Erizo
+    Step 1              50 (via Ajo)    inf             80 (via Ajo)    inf
+    Step 2              50 (via Ajo)*   110 (via Bordo) 80 (via Ajo)    inf
+    Step 3              50 (via Ajo)*   100 (via Danza) 80 (via Ajo)*   150 (via Danza) // Now we have 2 stars (*)
+    Step 4              50 (via Ajo)*   100 (via Danza) 80 (via Ajo)*   [140 (via Colina)]
+    ```
+
+    ```
+    NOTE: HERE WE ARE NOT CONSIDERING NO OF NODE HERE, WE ARE ONLY CONSIDERING ABOUT MINIMUM COST REQUIRED
+
+    NOTE: ON THE WAY WE ARE CALCULATING MOST AFFORDABLE PATH FOR EACH NODE - FROM THE STARTING NODE
+    I.E. FOR BRODO WE CALCULATE, FOR DANZA WE CALCULATE, FOR COLINA WE CALCULATE SEPARATELY
+    ```
+
+    ```
+    The Fourth Agent: In Colina
+    ```
+
+    ```
+    The cheapest path from Ajo to any town you know about that doesn't have an agent is now $140 to Erizo, via Danza and Colina.
+    You dispatch an agent to Erizo, but she reports that there are no routes from Erizo to towns without agents. (There's a route to Bordo, but Bordo has an agent)
+
+    Step 5              50 (via Ajo)*   100 (via Danza) 80 (via Ajo)*   [140 (via Colina)]
+
+    When there's an agent in every town, you know the fares from Ajo to every other town.
+
+
+    The key points are
+    
+    Each time you send an agent to a new town, you use the new information provided by that agent to revise your list of fares. Only the cheapest fare (that you know about) from the starting point to a given town is retained.
+    
+    You always send the new agent to the town that has the cheapest path from the starting point (not the cheapest edge from any town with an agent, as in the minimum spanning tree).
+    ```
 - 
 - 
-- 
-- 
-- 
-- 
+
+#### The Shortest-Path Array
+- As first step we've moved only one edge away from A
+    ```
+    If a fare is unknown or meaningless it's shown as infinity, represented by "inf"
+    This array will hold the [current versions of the shortest paths] to the other vertices, which we can call the destination vertices
+
+    A       B       C       D       E
+    inf(A)  50(A)   inf(A)  80(A)   inf(A)
+    
+    Only B and D are adjacent to  A - & - out of 50 & 80 - 50 is less & prefered here
+    Minimum distance from A is 50, to vertex B - The algorithm adds this vertex to the tree
+    Now B is circled in the graph
+    The "B column head" is in red. The edge from A to B is made darker 
+
+    In this case the parents are all A because we've moved only one edge away from A
+    ```
+- Now the algorithm knows not only all the edges from A, but all the edges from B as well
+- Now the algorithm goes through the shortest-path array, column by column using this new information
+- Vertices that are already in the tree, here A and B are skipped
+
+    ```
+    Now since we have 2 known nodes A & B
+    In the next move we fill the column for A -> A, B, C, D, E
+        We compare A-D & B-D & find out A-D is less expensive
+    In the next move again we fill the column for A -> A, B, C, D, E
+        We fill the column for B-C & D-C
+        We found D-C is less expensive
+    
+
+    Algorithm goes through the shortest-path array again,
+    Checking and updating the distances for destination vertices not in the tree; only C and E are still in this category
+    Column C and E are both updated
+
+
+    A       B       C       D       E
+    inf(A)  50(A)   100(D)  80(A)   150(D)
+
+    ```
+
+#### Java Code of Dijkstra's Algorithm
+
+    ```
+    ```
+
+
+
 
 
 ## When To Use What
