@@ -3731,8 +3731,87 @@ Always send an agent to the town whose overall fare from the starting point (Ajo
     ```
 
 #### Java Code of Dijkstra's Algorithm
+    ```
+    [IMPORTANT]
+
+    It's important to record not only the minimum distance
+    from the starting vertex to each destination vertex, but also the path taken.
+    
+    Fortunately, the entire path need not be explicitly stored
+    Its only necessary to store the parent of the destination vertex. The immidaite parent is the vertex reached just before the destination
+
+    We've seen this in the Workshop applet,
+    where, if 100(D) appears in the C column, it means that the cheapest path from A to C is 100, and D is the last vertex before C on this path
+    ```
+
 
     ```
+    The sPath[] Array:
+    Keeps track of the minimum distances from the starting vertex to the other vertices (destination vertices)
+    During the execution of the algorithm, these distances are changed,
+    until at the end they hold the actual shortest distances from the start
+
+    If 100(D) appears in the C column, it means that the cheapest path from A to C is 100
+    &
+    The D is the last vertex before C on this path
+
+    We call this class of objects "distance-parent" -> DistPar
+
+        /** items stored in sPath array */
+        class DistPar {
+            public int distance; /** distance from start to this vertex/point */
+            public int parentVert; /** current/immidiate-last parent of this vertex/point */
+
+            public DistPar(int pv, int d) {
+                distance = d;
+                parentVert = pv;
+            }
+        }
+
+
+
+    The path() method:
+    carries out the actual shortest-path algorithm
+    uses the 'DistPar' class & the 'Vertex' class
+
+        public void path() {
+            int startTree = 0;
+            vertexList[startTree].isInTree = true;
+            nTree = 1; // find all shortest paths
+            // start at vertex 0 put it in tree transfer row of distances from adjMat to sPath
+            for(int j = 0; j < nVerts; j++) {
+                int tempDist = adjMat[startTree][j];
+                sPath[j] = new DistPar(startTree, tempDist);
+            }
+
+            // until all vertices are in the tree
+            while(nTree < nVerts) {
+                int indexMin = getMin(); int minDist = sPath[indexMin].distance;
+                // get minimum from sPath
+                if(minDist == INFINITY) { // if all infinite or in tree
+                    System.out.println("There are unreachable vertices");
+                    break; // sPath is complete
+                } else { // reset currentVert
+                    currentVert = indexMin; // to closest vert
+                    startToCurrent = sPath[indexMin].distance;
+                    // minimum distance from startTree is to currentVert, and is startToCurrent
+                }
+                // put current vertex in tree
+                vertexList[currentVert].isInTree = true;
+                nTree++;
+                adjust_sPath(); // update sPath[] array
+            }
+            displayPaths(); // display sPath[] contents
+            nTree = 0;
+            for(int j=0; j<nVerts; j++) {
+                vertexList[j].isInTree = false;
+            }
+        }
+
+
+    DistPar Class:
+
+
     ```
 
 
