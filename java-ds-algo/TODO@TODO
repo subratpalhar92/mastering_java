@@ -1,0 +1,12 @@
+Given any string, insert a space after the first three characters using the Streams API
+
+"".toChar().map(char -> (String)char)->
+
+ 
+Given any integer list, fetch the third highest value from the list using Streams API
+list.stream().sorted().skip(2).collect()
+
+
+ 
+Given a list of Car brands, get the count of every car brand in the format of a map
+cars.strema().map(car -> Brand).collect(collectors.geroupingBy, collectors.counting)
