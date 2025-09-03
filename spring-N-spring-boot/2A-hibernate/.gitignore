@@ -1,0 +1,10 @@
+### APP ###
+hibernate-master/target/
+hibernate-app
+#!**/src/test/**/target/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store

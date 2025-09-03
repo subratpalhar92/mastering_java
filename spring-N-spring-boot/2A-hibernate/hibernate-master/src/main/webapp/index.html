@@ -1,0 +1,56 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Hibernate Master</title>
+</head>
+<body>
+    <h1>Hello from hibernate master Web App!</h1>
+    <p>This page is served from a Maven-generated WAR file using Java 8..</p>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hibernate Master Welcome</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        .links a {
+            display: inline-block;
+            margin-right: 15px;
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .links a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Hibernate Master Project!</h1>
+    <p>This is your quickstart web application with embedded Tomcat and Hibernate configured.</p>
+
+    <div class="links">
+        <p>Go to Hibernate User Demo [HQL]:</p>
+        <a href="users?action=list">List Users (and Add if empty)</a>
+        <a href="users?action=add">Add New User</a>
+    </div>
+
+    <div class="links">
+        <p>Go to Hibernate User Demo [DAO]:</p>
+        <a href="usersDAO?action=list">List Users (and Add if empty) [DAO]</a>
+        <a href="usersDAO?action=add">Add New User [DAO]</a>
+    </div>
+
+    <p>Current Time: <span id="currentTime"></span></p>
+
+    <script>
+        document.getElementById('currentTime').innerText = new Date().toLocaleString();
+    </script>
+
+</body>
+</html>
