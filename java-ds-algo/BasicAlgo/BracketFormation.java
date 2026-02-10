@@ -43,7 +43,7 @@ public class BracketFormation {
             if (currentStr.equals(nextExpectedStr)) {
                 ++count;
 
-                if (i + 1 == sArr.length) { // Fucker
+                if (i + 1 == sArr.length) {
                     if (count > longestMatch) {
                         longestMatch = count;
                     }
